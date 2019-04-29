@@ -24,11 +24,18 @@ namespace Metaheuristic.QAP
             this.distances = distances;
         }
 
+        #region Public Methods
         public int EvaluateSolution(int[] solution)
         {
             if (solution.Length != n)
             {
                 throw new InvalidQAPException("Solution must be of size N : " + n);
+            }
+
+            int[] equipToLocation = new int[8];
+            for (int i = 0; i < n; i++)
+            {
+                equipToLocation[solution[i]] = i;
             }
 
             int sum = 0;
@@ -37,25 +44,14 @@ namespace Metaheuristic.QAP
             {
                 for (int y = 0; y < n; y++)
                 {
-                    sum += weights[x, y] * GetDistance(x, y, solution);
+                    sum += weights[x, y] * GetDistance(equipToLocation[x], equipToLocation[y]);
                 }
             }
 
             return sum;
         }
 
-        private int GetDistance(int a, int b, int[] solution)
-        {
-            int i = 0;
-            int j = 0;
-            for (int k = 0; k < n; k++)
-            {
-                if (solution[k] == a) i = k;
-                if (solution[k] == b) j = k;
-            }
-
-            return GetDistance(i, j);
-        }
+       
         public int GetDistance(int a, int b)
         {
             return distances[a, b];
@@ -70,7 +66,21 @@ namespace Metaheuristic.QAP
         {
             return weights[a, b];
         }
+        #endregion
 
+        #region Private Methods
+        private int GetDistance(int a, int b, int[] solution)
+        {
+            int i = 0;
+            int j = 0;
+            for (int k = 0; k < n; k++)
+            {
+                if (solution[k] == a) i = k;
+                if (solution[k] == b) j = k;
+            }
+
+            return GetDistance(i, j);
+        }
 
         /// <summary>
         /// Return true if the 2D array is of size N*N
@@ -82,5 +92,7 @@ namespace Metaheuristic.QAP
         {
             return (array.GetLength(0) == n && array.GetLength(1) == n);
         }
+
+        #endregion
     }
 }
