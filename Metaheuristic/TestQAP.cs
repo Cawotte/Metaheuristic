@@ -3,11 +3,15 @@
 namespace Metaheuristic
 {
     using System;
+    using System.IO;
     using System.Collections.Generic;
     using System.Text;
     using QAP;
     class TestQAP
     {
+        static String path = @"..\Data\";
+        static String filename = "tai12.txt";
+
         static void Main(string[] args)
         {
             int[,] weights = new int[,]
@@ -24,9 +28,36 @@ namespace Metaheuristic
                 { 5, 9, 0 },
             };
 
+            List<string> paths = new List<string>();
+            //paths.Add(Directory.GetCurrentDirectory() + path + filename);
+            paths.Add(path + filename);
+            paths.Add("..\\Data\\tai12.txt"); //FOUND
+            //paths.Add("Data\\tai12.txt");
+            //paths.Add("..\\Data\tai12.txt");
+            paths.Add(@"..\Data\tai12.txt"); //FOUND
+            //paths.Add(@"Data\tai12.txt");
 
+            
+            foreach (string pf in paths) {
+                try {
+                    if (File.Exists(pf)) {
+                        Console.WriteLine("FOUND : " + pf);
+                    }
+                    else {
+                        Console.WriteLine("Not found : " + pf);    
+                    }
+                }
+                catch (FileNotFoundException err) {
+                    Console.WriteLine("EX : " + pf);    
+                }
+
+            }
 
             IQuadratricAssignment qap = new QuadratricAssignment(3, weights, distances);
+
+            IQuadratricAssignment qapf = new QuadratricAssignment(path + filename);
+
+            Console.WriteLine(qapf.ToString());
 
             List<int[]> solutions = new List<int[]>();
             solutions.Add(new int[] { 1, 2, 3 });

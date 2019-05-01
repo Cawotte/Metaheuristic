@@ -17,7 +17,10 @@ namespace Metaheuristic.QAP
         /// The N size of the problem : the number of facilities and locations.
         /// </summary>
         /// <returns></returns>
-        int GetN();
+        int N
+        {
+            get;
+        }
 
         int GetDistance(int a, int b);
 
