@@ -9,8 +9,8 @@ namespace Metaheuristic
     using QAP;
     class TestQAP
     {
-        static String path = @"..\Data\";
-        static String filename = "tai12.txt";
+        static String path = @"DataTaillard\";
+        static String filename = "tai12a.dat";
 
         static void Main(string[] args)
         {
@@ -28,14 +28,15 @@ namespace Metaheuristic
                 { 5, 9, 0 },
             };
 
+            /*
             List<string> paths = new List<string>();
             //paths.Add(Directory.GetCurrentDirectory() + path + filename);
             paths.Add(path + filename);
-            paths.Add("..\\Data\\tai12.txt"); //FOUND
-            //paths.Add("Data\\tai12.txt");
-            //paths.Add("..\\Data\tai12.txt");
-            paths.Add(@"..\Data\tai12.txt"); //FOUND
-            //paths.Add(@"Data\tai12.txt");
+            paths.Add("..\\DataTaillard\\tai12a.dat"); //FOUND
+            paths.Add("DataTaillard\\tai12a.dat");
+            paths.Add("..\\DataTaillard\tai12a.dat");
+            paths.Add(@"..\DataTaillard\tai12a.dat"); //FOUND
+            paths.Add(@"DataTaillard\tai12a.dat");
 
             
             foreach (string pf in paths) {
@@ -51,12 +52,11 @@ namespace Metaheuristic
                     Console.WriteLine("EX : " + pf);    
                 }
 
-            }
+            } */
 
             IQuadratricAssignment qap = new QuadratricAssignment(3, weights, distances);
 
             IQuadratricAssignment qapf = new QuadratricAssignment(path + filename);
-
             Console.WriteLine(qapf.ToString());
 
             List<int[]> solutions = new List<int[]>();
@@ -68,7 +68,6 @@ namespace Metaheuristic
             {
                 Console.WriteLine("Solution: [{0}]", string.Join(", ", solution));
                 Console.WriteLine("Value: " + qap.EvaluateSolution(solution));
-
             }
 
 
