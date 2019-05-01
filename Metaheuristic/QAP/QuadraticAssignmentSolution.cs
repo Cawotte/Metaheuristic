@@ -126,18 +126,27 @@ namespace Metaheuristic.QAP
             return product == 1f;
         }
 
+        public static bool IsValid(string solution)
+        {
+            return IsValid(ParseStringToIntArray(solution));
+        }
+
         private static int[] ParseStringToIntArray(string str)
         {
             List<int> arrangement = new List<int>();
-            string[] numbers = Regex.Split(str, @"\D+");
-            foreach (string number in numbers)
+
+            MatchCollection numbers = Regex.Matches(str, @"-?\d+"); 
+            for (int i = 0; i < numbers.Count; i++)
             {
+                string num = numbers[i].Value;
+
                 //There might be empty strings, so we ignore them.
-                if (!string.IsNullOrEmpty(number))
+                if (!string.IsNullOrEmpty(num))
                 {
-                    arrangement.Add(int.Parse(number));
+                    arrangement.Add(int.Parse(num));
                 }
             }
+
 
             return arrangement.ToArray();
         }
