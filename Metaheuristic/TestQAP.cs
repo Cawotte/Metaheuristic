@@ -54,11 +54,24 @@ namespace Metaheuristic
 
             } */
 
-            IQuadratricAssignment qap = new QuadratricAssignment(3, weights, distances);
+            //QuadratricAssignment qap = new QuadratricAssignment(3, weights, distances);
 
-            IQuadratricAssignment qapf = new QuadratricAssignment(path + filename);
+            QuadratricAssignment qapf = new QuadratricAssignment(path + filename);
             Console.WriteLine(qapf.ToString());
 
+            QuadraticAssignmentSolution sol = new QuadraticAssignmentSolution("8 1 6 2 11 10 3 5 9 7 12 4");
+            //QuadraticAssignmentSolution sol = new QuadraticAssignmentSolution("8 1 6 2 11 10 3 5 9 7 11 4");
+            //QuadraticAssignmentSolution sol = new QuadraticAssignmentSolution("8 1 6 3 5 9 7 11 4");
+
+            Console.WriteLine("Solution : ");
+            Console.WriteLine(qapf.ToString());
+
+
+            Console.WriteLine("IsValid : " + sol.IsValid());
+            Console.WriteLine("Score : ");
+            Console.WriteLine(qapf.EvaluateSolution(sol));
+            Console.WriteLine(qapf.EvaluateSolution(sol) * 2);
+            /*
             List<int[]> solutions = new List<int[]>();
             solutions.Add(new int[] { 1, 2, 3 });
             solutions.Add(new int[] { 3, 2, 1 });
@@ -68,7 +81,7 @@ namespace Metaheuristic
             {
                 Console.WriteLine("Solution: [{0}]", string.Join(", ", solution));
                 Console.WriteLine("Value: " + qap.EvaluateSolution(solution));
-            }
+            }*/
 
 
             Console.WriteLine("Click on any key to exit.");

@@ -9,16 +9,23 @@ namespace Metaheuristic.QAP
     using System.IO;
     using System.Text.RegularExpressions;
 
-    class QuadratricAssignment : IQuadratricAssignment
+    class QuadratricAssignment
     {
-        private int n;
+
+        /**
+         * 
+         * w(a,b) = Poids entre les equipements a et b.
+         * f(a) = Emplacement de l'équipement a.
+         * d( f(a), f(b) ) = Distance entre les emplacements des equipements a et b.
+         * 
+         * Score = Somme des w(a,b) * d( f(a), f(b) ) pour toutes les combinaisons (a,b) possibles.
+         * */
+
+        private readonly int n;
         private readonly int[,] weights;
         private readonly int[,] distances;
 
-        public int N
-        {
-            get => n;
-        }
+        public int N { get => n; }
 
         public int[,] Weights { get => weights; }
         public int[,] Distances { get => distances; }
@@ -37,7 +44,7 @@ namespace Metaheuristic.QAP
             this.distances = distances;
         }
 
-        public QuadratricAssignment(String filepath)
+        public QuadratricAssignment(string filepath)
         {
             if (!File.Exists(filepath))
             {
@@ -90,18 +97,29 @@ namespace Metaheuristic.QAP
             return sum;
         }
 
+        public int EvaluateSolution(QuadraticAssignmentSolution solution)
+        {
+            if (solution.N != n)
+            {
+                throw new InvalidQAPException("Solution must be of size N : " + n);
+            }
+            int sum = 0;
+
+            for (int x = 0; x < n; x++)
+            {
+                for (int y = x + 1; y < n; y++)
+                {
+                    sum += weights[x, y] * distances[solution.Locations[x], solution.Locations[y]];
+                }
+            }
+
+            sum *= 2;
+
+            return sum;
+
+        }
+
        
-        public int GetDistance(int a, int b)
-        {
-            return distances[a, b];
-        }
-        
-
-        public int GetWeight(int a, int b)
-        {
-            return weights[a, b];
-        }
-
         public override string ToString()
         {
             string str = "";
