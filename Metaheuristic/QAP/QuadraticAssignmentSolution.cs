@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,17 +10,33 @@ namespace Metaheuristic.QAP
     {
         // Only the array solution is necessary. The array locations is deduced from it and makes up for faster calculations.
 
-        private int n;
+        private readonly int n;
 
         /// <summary>
-        /// The solution. equipments[i] = equipment positioned at location #i.
+        /// The solution. solution[i] = location of the equipment #i
+        /// 
+        /// Because it's in [1, n], a minus one must be added when the value is used to look in the Distances array.
         /// </summary>
         private int[] solution;
+        
+        private int bestKnownValue;
 
-        /// <summary>
-        /// locations[i] = location of the equipment #i.
-        /// </summary>
-        private int[] locations;
+        public int N { get => n; }
+        public int[] Solution
+        {
+            get
+            {
+                return solution;
+            }
+            
+        }
+
+        public int this[int i]
+        {
+            get => solution[i];
+        }
+        
+        public int BestKnownValue { get => bestKnownValue; set => bestKnownValue = value; }
 
         public QuadraticAssignmentSolution(int[] solution)
         {
@@ -30,56 +47,51 @@ namespace Metaheuristic.QAP
             {
                 throw new InvalidQAPException("This is not a valid solution!");
             }
-
-            int[] locations = new int[n + 1];
-            for (int i = 0; i < n; i++)
-            {
-                locations[solution[i]] = i;
-            }
-
-            this.locations = locations;
         }
 
         public QuadraticAssignmentSolution(string strSolution)
         {
             //Convert string to int array
-            this.solution = ParseStringToIntArray(strSolution);
+            int[] solution = Utils.ParseStringToIntArray(strSolution);
+
+            this.n = solution.Length;
+            this.solution = solution;
 
             if (!IsValid(solution))
             {
                 throw new InvalidQAPException("This is not a valid solution!");
             }
 
-
-            /*
-            List<int> arrangement = new List<int>();
-            string[] numbers = Regex.Split(strSolution, @"\D+");
-            foreach (string number in numbers)
-            {
-                //There might be empty strings, so we ignore them.
-                if (!string.IsNullOrEmpty(number))
-                {
-                    arrangement.Add(int.Parse(number));
-                }
-            }
-
-            this.solution = arrangement.ToArray();*/
-            this.n = this.solution.Length;
-
-            int[] locations = new int[n + 1];
-            for (int i = 0; i < n; i++)
-            {
-                locations[solution[i]] = i;
-            }
-
-            this.locations = locations;
-
-
         }
 
-        public int N { get => n; }
-        public int[] Solution { get => solution; }
-        public int[] Locations { get => locations; }
+        public QuadraticAssignmentSolution(string filepath, bool dummy)
+        {
+            if (!File.Exists(filepath))
+            {
+                throw new FileNotFoundException();
+            }
+
+            StreamReader file = new StreamReader(filepath);
+
+            int[] nums = Utils.ParseStringToIntArray(file.ReadLine());
+
+            //Read N
+            this.n = nums[0];
+
+            //Read Best Value
+            this.bestKnownValue = nums[1];
+
+            //Read Solution
+            this.solution = Utils.ReadNextIntegers(file, n);
+
+            file.Close();
+
+            if (!IsValid(solution))
+            {
+                throw new InvalidQAPException("This is not a valid solution!");
+            }
+        }
+        
 
         public bool IsValid()
         {
@@ -99,6 +111,11 @@ namespace Metaheuristic.QAP
             return str;
         }
 
+        /// <summary>
+        /// Return true if the solution is <b>coherent</b> : 1 occurence of each number from 1 to N, N is the number of numbers.
+        /// </summary>
+        /// <param name="solution"></param>
+        /// <returns></returns>
         public static bool IsValid(int[] solution)
         {
             int n = solution.Length;
@@ -128,27 +145,9 @@ namespace Metaheuristic.QAP
 
         public static bool IsValid(string solution)
         {
-            return IsValid(ParseStringToIntArray(solution));
+            return IsValid(Utils.ParseStringToIntArray(solution));
         }
 
-        private static int[] ParseStringToIntArray(string str)
-        {
-            List<int> arrangement = new List<int>();
-
-            MatchCollection numbers = Regex.Matches(str, @"-?\d+"); 
-            for (int i = 0; i < numbers.Count; i++)
-            {
-                string num = numbers[i].Value;
-
-                //There might be empty strings, so we ignore them.
-                if (!string.IsNullOrEmpty(num))
-                {
-                    arrangement.Add(int.Parse(num));
-                }
-            }
-
-
-            return arrangement.ToArray();
-        }
+        
     }
 }

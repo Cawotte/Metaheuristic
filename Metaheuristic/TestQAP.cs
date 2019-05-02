@@ -16,8 +16,7 @@ namespace Metaheuristic
         static void Main(string[] args)
         {
 
-            TestSolutionsValidity();
-
+            TestDataReading();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -55,6 +54,45 @@ namespace Metaheuristic
                     Console.WriteLine("FAILED");
                 }
 
+            }
+        }
+
+        private static void TestDataReading()
+        {
+            List<string> filenames = new List<string>();
+            filenames.Add("tai12a");
+            //filenames.Add("tai12b");
+            filenames.Add("tai15a");
+            filenames.Add("tai17a");
+            filenames.Add("tai20a");
+            filenames.Add("tai25a");
+
+            foreach (string fname in filenames)
+            {
+                Console.WriteLine("QAP : " + fname);
+
+                string problemFilepath = path + fname + ".dat";
+                string solutionFilepath = path + fname + ".sln";
+                
+                QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+                QuadraticAssignmentSolution solution = new QuadraticAssignmentSolution(solutionFilepath, false);
+
+                int evaluation = qap.Evaluate(solution);
+
+                Console.WriteLine("Evaluation      : " + evaluation);
+                Console.WriteLine("Expected result : " + solution.BestKnownValue);
+                if (evaluation == solution.BestKnownValue)
+                {
+                    Console.WriteLine("SUCCESSFUL");
+                }
+                else
+                {
+                    Console.WriteLine("FAILED");
+                }
+
+
+                Console.WriteLine("Click on any key to continue.");
+                Console.ReadKey();
             }
         }
 
@@ -111,7 +149,7 @@ namespace Metaheuristic
             foreach (int[] solution in solutions)
             {
                 Console.WriteLine("Solution: [{0}]", string.Join(", ", solution));
-                Console.WriteLine("Value: " + qap.EvaluateSolution(solution));
+                Console.WriteLine("Value: " + qap.Evaluate(solution));
             }
         }
 
@@ -127,8 +165,8 @@ namespace Metaheuristic
 
             
             Console.WriteLine("Score : ");
-            Console.WriteLine(qapf.EvaluateSolution(sol));
-            Console.WriteLine(qapf.EvaluateSolution(sol) * 2);
+            Console.WriteLine(qapf.Evaluate(sol));
+            Console.WriteLine(qapf.Evaluate(sol) * 2);
 
         }
     }
