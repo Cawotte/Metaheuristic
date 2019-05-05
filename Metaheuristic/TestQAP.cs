@@ -7,6 +7,7 @@ namespace Metaheuristic
     using System.Collections.Generic;
     using System.Text;
     using QAP;
+    using System.Linq;
 
     class TestQAP
     {
@@ -15,8 +16,8 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-
-            TestDataReading();
+            TestComposition();
+            //TestDataReading();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -80,8 +81,8 @@ namespace Metaheuristic
                 int evaluation = qap.Evaluate(solution);
 
                 Console.WriteLine("Evaluation      : " + evaluation);
-                Console.WriteLine("Expected result : " + solution.BestKnownValue);
-                if (evaluation == solution.BestKnownValue)
+                Console.WriteLine("Expected result : " + solution.Score);
+                if (evaluation == solution.Score)
                 {
                     Console.WriteLine("SUCCESSFUL");
                 }
@@ -168,6 +169,27 @@ namespace Metaheuristic
             Console.WriteLine(qapf.Evaluate(sol));
             Console.WriteLine(qapf.Evaluate(sol) * 2);
 
+        }
+
+        private static void TestComposition()
+        {
+            int[] p2 = new int[] { 1, 4, 2, 3, 5 };
+            int[] p1 = new int[] { 2, 3, 4, 5, 1 };
+
+            Console.WriteLine(string.Join(",", p1));
+            Console.WriteLine(string.Join(",", p2));
+
+            int[] p3 = new int[5];
+            p1.CopyTo(p3, 0);
+
+            Console.WriteLine("Composition:");
+            for (int i = 0; i < 6; i++)
+            {
+                p3 = Utils.Compose(p3, p2);
+                Console.WriteLine(string.Join(",", p3));
+            }
+
+            Console.WriteLine("-----");
         }
     }
 }

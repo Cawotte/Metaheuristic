@@ -19,7 +19,7 @@ namespace Metaheuristic.QAP
         /// </summary>
         private int[] solution;
         
-        private int bestKnownValue;
+        private int score;
 
         public int N { get => n; }
         public int[] Solution
@@ -36,7 +36,7 @@ namespace Metaheuristic.QAP
             get => solution[i];
         }
         
-        public int BestKnownValue { get => bestKnownValue; set => bestKnownValue = value; }
+        public int Score { get => score; set => score = value; }
 
         public QuadraticAssignmentSolution(int[] solution)
         {
@@ -79,7 +79,7 @@ namespace Metaheuristic.QAP
             this.n = nums[0];
 
             //Read Best Value
-            this.bestKnownValue = nums[1];
+            this.score = nums[1];
 
             //Read Solution
             this.solution = Utils.ReadNextIntegers(file, n);
@@ -91,7 +91,31 @@ namespace Metaheuristic.QAP
                 throw new InvalidQAPException("This is not a valid solution!");
             }
         }
-        
+
+        /// <summary>
+        /// Create a random assignement solution of size N.
+        /// </summary>
+        /// <param name="n"></param>
+        public QuadraticAssignmentSolution(int n)
+        {
+            //RANDOM SOLUTION OF S
+
+            this.n = n;
+            solution = new int[n];
+
+            //Fill the array with numbers from 1 to N.
+            for (int i = 0; i < n; i++)
+            {
+                solution[i] = i + 1;
+            }
+
+            //Shuffle it.
+            Utils.Shuffle(solution);
+
+
+        }
+
+
 
         public bool IsValid()
         {

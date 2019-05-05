@@ -107,7 +107,10 @@ namespace Metaheuristic.QAP
                 }
             }
 
+            //Only works for A type Taillard Instance (B does not have symmetrical weights)
             sum *= 2;
+
+            solution.Score = sum; //save its score
 
             return sum;
 

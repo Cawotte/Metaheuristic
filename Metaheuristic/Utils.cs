@@ -11,6 +11,34 @@ namespace Metaheuristic
     class Utils
     {
 
+        public static int[] Compose(int[] p1, int[] p2)
+        {
+            int[] composed = new int[p1.Length];
+
+            for (int i = 0; i < composed.Length; i++)
+            {
+                composed[i] = p2[p1[i]-1];
+            }
+
+            return composed;
+        }
+
+        public static void Shuffle<T>(T[] array)
+        {
+            //Quick and poor shuffler, it can be faster + should be able to use a seed.
+            ///TODO : Rework shuffler into something better
+
+            Random rand = new Random();
+
+            //Randomly swap spots.
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                int j = rand.Next(i, array.Length);
+                T temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
         /// <summary>
         /// Parse the string to return an array with all integers from the string.
         /// </summary>
