@@ -16,8 +16,9 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestComposition();
+            TestCompositionSimple();
             //TestDataReading();
+            MultiplyPermutations();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -185,9 +186,60 @@ namespace Metaheuristic
             Console.WriteLine("Composition:");
             for (int i = 0; i < 6; i++)
             {
-                p3 = Utils.Compose(p3, p2);
+                p3 = Utils.Multiply(p3, p2);
                 Console.WriteLine(string.Join(",", p3));
             }
+
+            Console.WriteLine("-----");
+        }
+
+        private static void TestCompositionSimple()
+        {
+            int[] p1 = new int[] { 2, 1, 3};
+            int[] p2 = new int[] { 1, 3, 2};
+
+            Console.WriteLine("A = " + string.Join(",", p1));
+            Console.WriteLine("B = " + string.Join(",", p2));
+
+            int[] p3 = Utils.Multiply(p1, p2);
+
+            Console.WriteLine("A * B = " + string.Join(",", p3));
+            if (Utils.ArrayAreEquals(p3, new int[] { 3, 1, 2 }))
+            {
+                Console.WriteLine("\tSUCCESS");
+            }
+            else
+            {
+                Console.WriteLine("\tFAILED");
+            }
+            
+            p3 = Utils.Multiply(p2, p1);
+            Console.WriteLine("B * A = " + string.Join(",", p3));
+            if (Utils.ArrayAreEquals(p3, new int[] { 2, 3, 1 }))
+            {
+                Console.WriteLine("\tSUCCESS");
+            }
+            else
+            {
+                Console.WriteLine("\tFAILED");
+            }
+
+            Console.WriteLine("-----");
+        }
+
+        private static void MultiplyPermutations()
+        {
+            int[] p1 = new int[] { 1, 4, 2, 3, 5 };
+            int[] p2 = new int[] { 2, 3, 5, 4, 1 };
+
+            Console.WriteLine("A = " + string.Join(",", p1));
+            Console.WriteLine("B = " + string.Join(",", p2));
+
+            int[] p3 = Utils.Multiply(p1, p2);
+            Console.WriteLine("A * B = " + string.Join(",", p3));
+
+            p3 = Utils.Multiply(p2, p1);
+            Console.WriteLine("B * A = " + string.Join(",", p3));
 
             Console.WriteLine("-----");
         }

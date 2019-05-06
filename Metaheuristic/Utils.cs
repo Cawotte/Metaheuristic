@@ -11,16 +11,34 @@ namespace Metaheuristic
     class Utils
     {
 
-        public static int[] Compose(int[] p1, int[] p2)
+        public static int[] Multiply(int[] p1, int[] p2)
         {
-            int[] composed = new int[p1.Length];
+            int[] product = new int[p1.Length];
 
-            for (int i = 0; i < composed.Length; i++)
+            for (int i = 0; i < product.Length; i++)
             {
-                composed[i] = p2[p1[i]-1];
+                product[i] = p2[p1[i]-1];
             }
 
-            return composed;
+            return product;
+        }
+
+        public static bool ArrayAreEquals(int[] a, int[] b)
+        {
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public static void Shuffle<T>(T[] array)
