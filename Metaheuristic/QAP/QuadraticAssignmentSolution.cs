@@ -122,18 +122,66 @@ namespace Metaheuristic.QAP
             return IsValid(solution);
         }
 
+        #region Override
         public override string ToString()
         {
+            return "{" + string.Join(",", solution) + "}";
+            /*
             string str = "";
             str += n + "\n";
             for (int i = 0; i < solution.Length; i++)
             {
                 str += solution[i] + " ";
             }
-            str += "\n";
+            str += "\n"; 
 
-            return str;
+            return str; */
         }
+
+        public override bool Equals(object obj)
+        {
+            //If null or types doesn't match
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+
+            QuadraticAssignmentSolution other = (QuadraticAssignmentSolution)obj;
+
+            //Compare the array solutions
+            return ArrayAreEquals(this.solution, other.Solution);
+
+        }
+
+        public bool Equals(int[] array)
+        {
+            return ArrayAreEquals(this.solution, array);
+        }
+
+        public override int GetHashCode()
+        {
+            ///TODO : To Change ?
+            return solution.GetHashCode();
+        }
+
+        /// <summary>
+        /// Multiply the solutions permutations using Permutation multiplication rules, and return the new solution. Non-Commutative!
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static QuadraticAssignmentSolution operator *(QuadraticAssignmentSolution p1, QuadraticAssignmentSolution p2)
+        {
+            int[] product = new int[p1.N];
+
+            for (int i = 0; i < product.Length; i++)
+            {
+                product[i] = p2[p1[i] - 1];
+            }
+
+            return new QuadraticAssignmentSolution(product);
+        }
+        #endregion
 
         /// <summary>
         /// Return true if the solution is <b>coherent</b> : 1 occurence of each number from 1 to N, N is the number of numbers.
@@ -172,6 +220,25 @@ namespace Metaheuristic.QAP
             return IsValid(Utils.ParseStringToIntArray(solution));
         }
 
-        
+        #region Private Methods
+        private static bool ArrayAreEquals(int[] a, int[] b)
+        {
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+        #endregion
+
     }
 }

@@ -16,9 +16,9 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestCompositionSimple();
-            //TestDataReading();
-            MultiplyPermutations();
+            TestEquals();
+            TestMultiplyPermutations();
+            TestMultiplySolution();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -193,7 +193,7 @@ namespace Metaheuristic
             Console.WriteLine("-----");
         }
 
-        private static void TestCompositionSimple()
+        private static void TestMultiplyPermutations()
         {
             int[] p1 = new int[] { 2, 1, 3};
             int[] p2 = new int[] { 1, 3, 2};
@@ -227,6 +227,39 @@ namespace Metaheuristic
             Console.WriteLine("-----");
         }
 
+        private static void TestMultiplySolution()
+        {
+            QuadraticAssignmentSolution p1 = new QuadraticAssignmentSolution(new int[] { 2, 1, 3 });
+            QuadraticAssignmentSolution p2 = new QuadraticAssignmentSolution(new int[] { 1, 3, 2 });
+
+            Console.WriteLine("A = " + string.Join(",", p1));
+            Console.WriteLine("B = " + string.Join(",", p2));
+
+            QuadraticAssignmentSolution p3 = p1 * p2;
+
+            Console.WriteLine("A * B = " + string.Join(",", p3));
+            if (p3.Equals(new int[] { 3, 1, 2 }))
+            {
+                Console.WriteLine("\tSUCCESS");
+            }
+            else
+            {
+                Console.WriteLine("\tFAILED");
+            }
+
+            p3 = p2 * p1;
+            Console.WriteLine("B * A = " + string.Join(",", p3));
+            if (p3.Equals( new int[] { 2, 3, 1 }))
+            {
+                Console.WriteLine("\tSUCCESS");
+            }
+            else
+            {
+                Console.WriteLine("\tFAILED");
+            }
+
+            Console.WriteLine("-----");
+        }
         private static void MultiplyPermutations()
         {
             int[] p1 = new int[] { 1, 4, 2, 3, 5 };
@@ -242,6 +275,59 @@ namespace Metaheuristic
             Console.WriteLine("B * A = " + string.Join(",", p3));
 
             Console.WriteLine("-----");
+        }
+        private static void TestEquals()
+        {
+
+            Console.WriteLine("---- TEST EQUALS SOLUTIONS -----");
+            int[] p1 = new int[] { 1, 4, 2, 3, 5 };
+            int[] p2 = new int[] { 2, 3, 5, 4, 1 };
+
+            QuadraticAssignmentSolution s1 = new QuadraticAssignmentSolution(p1);
+            QuadraticAssignmentSolution s2 = new QuadraticAssignmentSolution(p2);
+
+
+            Console.WriteLine("s1 = " + s1.ToString());
+            Console.WriteLine("s2 = " + s2.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine("s1.Equals(s1) == true");
+            DisplaySuccess(s1.Equals(s1) == true);
+
+            Console.WriteLine("s1.Equals(s2) == false");
+            DisplaySuccess(s1.Equals(s2) == false);
+
+            Console.WriteLine();
+
+            Console.WriteLine("s1.Equals(p1) == true");
+            DisplaySuccess(s1.Equals(p1) == true);
+
+            Console.WriteLine("s1.Equals(p2) == false");
+            DisplaySuccess(s1.Equals(p2) == false);
+
+
+            Console.WriteLine();
+
+            Console.WriteLine("s1.Equals(new int[] { 1, 4, 2, 3, 5 }) == true");
+            DisplaySuccess(s1.Equals(new int[] { 1, 4, 2, 3, 5 }) == true);
+
+            Console.WriteLine("s1.Equals(new int[] { 2, 3, 5, 4, 1 }) == false");
+            DisplaySuccess(s1.Equals(new int[] { 2, 3, 5, 4, 1 }) == false);
+
+
+            Console.WriteLine("------");
+        }
+
+        private static void DisplaySuccess(bool success)
+        {
+            if (success)
+            {
+                Console.WriteLine("\tSUCCESS");
+            }
+            else
+            {
+                Console.WriteLine("\tFAILED");
+            }
         }
     }
 }
