@@ -16,9 +16,7 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestEquals();
-            TestMultiplyPermutations();
-            TestMultiplySolution();
+            TestDataReading();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
