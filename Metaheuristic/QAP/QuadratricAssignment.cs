@@ -9,7 +9,7 @@ namespace Metaheuristic.QAP
     using System.IO;
     using System.Text.RegularExpressions;
 
-    class QuadratricAssignment
+    public class QuadratricAssignment
     {
 
         /**

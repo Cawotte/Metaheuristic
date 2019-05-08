@@ -9,7 +9,7 @@ namespace Metaheuristic
     using QAP;
     using System.Linq;
 
-    class TestQAP
+    public class TestQAP
     {
         static String path = @"DataTaillard\";
         static String filename = "tai12a.dat";

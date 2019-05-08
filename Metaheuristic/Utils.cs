@@ -8,7 +8,7 @@ namespace Metaheuristic
     using System.Text.RegularExpressions;
 
 
-    class Utils
+    public class Utils
     {
 
         public static int[] Multiply(int[] p1, int[] p2)

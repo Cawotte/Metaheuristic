@@ -8,7 +8,7 @@ namespace Metaheuristic
     using System.Text;
     using System.Linq;
 
-    class GeneticAlgorithm
+    public class GeneticAlgorithm
     {
 
         private int n;

@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Metaheuristic.QAP
 {
-    class QuadraticAssignmentSolution
+    public class QuadraticAssignmentSolution
     {
         // Only the array solution is necessary. The array locations is deduced from it and makes up for faster calculations.
 
