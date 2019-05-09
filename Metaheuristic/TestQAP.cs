@@ -16,12 +16,33 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestDataReading();
+            TestAlgorithmGenetic();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
         }
 
+        private static void TestAlgorithmGenetic()
+        {
+
+            string problemFilepath = path + "tai12a" + ".dat";
+            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+
+            GeneticAlgorithm ga = new GeneticAlgorithm(qap, 30);
+            ga.Run(30);
+        }
+        private static void TestRandomInversions()
+        {
+            int n = 4;
+            int[] inversion = new int[2];
+            int count = 10;
+
+            for (int i = 0; i < count; i++)
+            {
+                inversion = QuadraticAssignmentSolution.GetRandomPermutation(n);
+                Console.WriteLine(String.Format("({0},{1})", inversion[0], inversion[1]));
+            }
+        }
         private static void TestSolutionsValidity() {
 
             //We pair the tests to their expected results.

@@ -215,9 +215,61 @@ namespace Metaheuristic.QAP
             return product == 1f;
         }
 
+        public QuadraticAssignmentSolution ApplyInversion(int[] inversion)
+        {
+            if (inversion.Length != 2)
+            {
+                throw new InvalidQAPException("Inversion needs to be an array of 2 int !");
+            }
+            if (inversion[0] >= n || inversion[1] >= n)
+            {
+                throw new InvalidQAPException("Outs of bounds inversion values !");
+            }
+
+            //Swap the values in the inversion indexes.
+
+            int temp = solution[inversion[0]];
+            solution[inversion[0]] = solution[inversion[1]];
+            solution[inversion[1]] = temp;
+
+            //To chain call
+            return this;
+            
+
+        }
+
         public static bool IsValid(string solution)
         {
             return IsValid(Utils.ParseStringToIntArray(solution));
+        }
+
+        public static int[] GetRandomPermutation(int sizeN)
+        {
+            //Values goes from 0 to n-1 !!
+            //Certified no self-permutations
+            //To optimize?
+
+            List<int> marbleBag = new List<int>();
+            for (int i = 0; i < sizeN; i++)
+            {
+                marbleBag.Add(i);
+            }
+
+            //Pick two random
+            Random rnd = new Random();
+            int[] inversion = new int[2];
+
+
+            //Pick 1
+            inversion[0] = marbleBag[rnd.Next(0, sizeN)];
+
+            //Remove it from list
+            marbleBag.Remove(inversion[0]);
+
+            //Pick 2
+            inversion[1] = marbleBag[rnd.Next(0, sizeN - 1)];
+
+            return inversion;
         }
 
         #region Private Methods
