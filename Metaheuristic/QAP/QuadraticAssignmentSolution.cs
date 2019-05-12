@@ -9,10 +9,10 @@ namespace Metaheuristic.QAP
     public class QuadraticAssignmentSolution
     {
         //Store the Identity Permutation fo size N (Dynamic Programming)
-        private static Dictionary<int, QuadraticAssignmentSolution> identities;
-        
+        private static Dictionary<int, QuadraticAssignmentSolution> identities = new Dictionary<int, QuadraticAssignmentSolution>();
+
         //Store all inversions possibles for a n-sized solutions.
-        private static Dictionary<int, List<Tuple<int, int>>> inversions;
+        private static Dictionary<int, List<Tuple<int, int>>> inversions = new Dictionary<int, List<Tuple<int, int>>>();
 
         #region Members
         private readonly int n;

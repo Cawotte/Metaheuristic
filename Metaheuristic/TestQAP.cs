@@ -16,12 +16,48 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestAlgorithmGenetic();
+            TestRecuitSimule();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
         }
 
+        private static void TestRecuitSimule()
+        {
+
+            string problemFilepath = path + "tai12a" + ".dat";
+            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+
+            QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+            QuadraticAssignmentSolution best;
+            
+            RecuitSimule recuit = new RecuitSimule(qap, 0.9f, 100, 5);
+            best = recuit.Execute(initialSol, 100000);
+            
+            recuit = new RecuitSimule(qap, 0.9f, 100, 5);
+            best = recuit.Execute(initialSol, 10000);
+            
+            recuit = new RecuitSimule(qap, 0.9f, 100, 5);
+            best = recuit.Execute(initialSol, 1000);
+
+            
+            recuit = new RecuitSimule(qap, 0.95f, 100, 5);
+            best = recuit.Execute(initialSol, 1000);
+
+            recuit = new RecuitSimule(qap, 0.80f, 100, 5);
+            best = recuit.Execute(initialSol, 1000);
+
+
+            recuit = new RecuitSimule(qap, 0.9f, 100, 10);
+            best = recuit.Execute(initialSol, 1000);
+
+            
+            recuit = new RecuitSimule(qap, 0.9f, 100, 20);
+            best = recuit.Execute(initialSol, 1000);
+
+
+
+        }
         private static void TestAlgorithmGenetic()
         {
 
