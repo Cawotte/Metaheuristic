@@ -8,8 +8,13 @@ namespace Metaheuristic.QAP
 {
     public class QuadraticAssignmentSolution
     {
-        // Only the array solution is necessary. The array locations is deduced from it and makes up for faster calculations.
+        //Store the Identity Permutation fo size N (Dynamic Programming)
+        private static Dictionary<int, QuadraticAssignmentSolution> identities;
+        
+        //Store all inversions possibles for a n-sized solutions.
+        private static Dictionary<int, List<Tuple<int, int>>> inversions;
 
+        #region Members
         private readonly int n;
 
         /// <summary>
@@ -20,7 +25,9 @@ namespace Metaheuristic.QAP
         private int[] solution;
         
         private int score;
+        #endregion
 
+        #region Properties
         public int N { get => n; }
         public int[] Solution
         {
@@ -37,6 +44,10 @@ namespace Metaheuristic.QAP
         }
         
         public int Score { get => score; set => score = value; }
+
+        #endregion
+
+        #region Constructors
 
         public QuadraticAssignmentSolution(int[] solution)
         {
@@ -115,27 +126,38 @@ namespace Metaheuristic.QAP
 
         }
 
+        /// <summary>
+        /// Clone the solution
+        /// </summary>
+        /// <param name="solution"></param>
+        public QuadraticAssignmentSolution(QuadraticAssignmentSolution original) {
 
+            this.n = original.N;
 
+            //Clone the array too
+            int[] sol = new int[this.n];
+            original.solution.CopyTo(sol, 0);
+
+            this.solution = sol;
+        }
+
+        #endregion
+
+        #region Public Methods
         public bool IsValid()
         {
             return IsValid(solution);
+        }
+
+        public QuadraticAssignmentSolution Clone()
+        {
+            return new QuadraticAssignmentSolution(this);
         }
 
         #region Override
         public override string ToString()
         {
             return "{" + string.Join(",", solution) + "}";
-            /*
-            string str = "";
-            str += n + "\n";
-            for (int i = 0; i < solution.Length; i++)
-            {
-                str += solution[i] + " ";
-            }
-            str += "\n"; 
-
-            return str; */
         }
 
         public override bool Equals(object obj)
@@ -149,7 +171,7 @@ namespace Metaheuristic.QAP
             QuadraticAssignmentSolution other = (QuadraticAssignmentSolution)obj;
 
             //Compare the array solutions
-            return ArrayAreEquals(this.solution, other.Solution);
+            return Equals(other.Solution);
 
         }
 
@@ -163,57 +185,9 @@ namespace Metaheuristic.QAP
             ///TODO : To Change ?
             return solution.GetHashCode();
         }
-
-        /// <summary>
-        /// Multiply the solutions permutations using Permutation multiplication rules, and return the new solution. Non-Commutative!
-        /// </summary>
-        /// <param name="p1"></param>
-        /// <param name="p2"></param>
-        /// <returns></returns>
-        public static QuadraticAssignmentSolution operator *(QuadraticAssignmentSolution p1, QuadraticAssignmentSolution p2)
-        {
-            int[] product = new int[p1.N];
-
-            for (int i = 0; i < product.Length; i++)
-            {
-                product[i] = p2[p1[i] - 1];
-            }
-
-            return new QuadraticAssignmentSolution(product);
-        }
         #endregion
 
-        /// <summary>
-        /// Return true if the solution is <b>coherent</b> : 1 occurence of each number from 1 to N, N is the number of numbers.
-        /// </summary>
-        /// <param name="solution"></param>
-        /// <returns></returns>
-        public static bool IsValid(int[] solution)
-        {
-            int n = solution.Length;
-            int[] occurences = new int[n];
 
-            for (int i = 0; i < n; i++)
-            {
-                int assignment = solution[i];
-                //If value out of bounds
-                if (assignment <= 0 || assignment > n)
-                {
-                    return false;
-                }
-
-                occurences[assignment - 1]++;
-            }
-
-            //There must exactly one occurences of each number between 1 and n.  If we factor all the occurences the result will be 1 only if it's the case.
-            float product = 1f;
-            for (int i = 0; i < occurences.Length; i++)
-            {
-                product *= occurences[i];
-            }
-
-            return product == 1f;
-        }
 
         public QuadraticAssignmentSolution ApplyInversion(int[] inversion)
         {
@@ -234,8 +208,120 @@ namespace Metaheuristic.QAP
 
             //To chain call
             return this;
-            
 
+
+        }
+
+        public QuadraticAssignmentSolution GetNeighbor(Tuple<int, int> inversion)
+        {
+            if (!IsValidInversion(inversion) )
+            {
+                throw new InvalidQAPException("The inversion is not valid!");
+            }
+
+            //Copy current
+            QuadraticAssignmentSolution neighbor = Clone();
+
+            //Inverse two elements
+            int temp = neighbor[inversion.Item1];
+            neighbor.Solution[inversion.Item1] = neighbor[inversion.Item2];
+            neighbor.Solution[inversion.Item2] = temp;
+
+            return neighbor;
+        }
+
+        public QuadraticAssignmentSolution GetRandomNeighbor()
+        {
+            return GetNeighbor(GetRandomInversion());
+        }
+
+        public Tuple<int, int> GetRandomInversion()
+        {
+
+            Random rnd = new Random();
+            Tuple<int, int>[] inversions = QuadraticAssignmentSolution.GetInversions(n);
+
+            return inversions[rnd.Next(0, inversions.Length)];
+        }
+        #endregion
+
+        #region Private Methods
+        private static bool ArrayAreEquals(int[] a, int[] b)
+        {
+            if (a.Length != b.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (a[i] != b[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsValidInversion(Tuple<int, int> inversion)
+        {
+            return (inversion.Item1 >= 0 && inversion.Item1 < n && inversion.Item2 >= 0 && inversion.Item2 < n);
+        }
+
+        #endregion
+
+        #region Static Methods
+        /// <summary>
+        /// Multiply the solutions permutations using Permutation multiplication rules, and return the new solution. Non-Commutative!
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <returns></returns>
+        public static QuadraticAssignmentSolution operator *(QuadraticAssignmentSolution p1, QuadraticAssignmentSolution p2)
+        {
+            int[] product = new int[p1.N];
+
+            for (int i = 0; i < product.Length; i++)
+            {
+                product[i] = p2[p1[i] - 1];
+            }
+
+            return new QuadraticAssignmentSolution(product);
+        }
+
+        /// <summary>
+        /// Return true if the solution is <b>coherent</b> : 1 occurence of each number from 1 to N, N is the number of numbers.
+        /// </summary>
+        /// <param name="solution"></param>
+        /// <returns></returns>
+        public static bool IsValid(int[] solution)
+        {
+            int n = solution.Length;
+            int[] occurences = new int[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                int assignment = solution[i];
+
+                //If value out of bounds
+                if (assignment <= 0 || assignment > n)
+                {
+                    return false;
+                }
+
+                occurences[assignment - 1]++;
+
+                if (occurences[assignment - 1] > 1)
+                    return false;
+            }
+            
+            for (int i = 0; i < occurences.Length; i++)
+            {
+                if (occurences[i] != 1) return false;
+            }
+
+            return true;
         }
 
         public static bool IsValid(string solution)
@@ -243,7 +329,55 @@ namespace Metaheuristic.QAP
             return IsValid(Utils.ParseStringToIntArray(solution));
         }
 
-        public static int[] GetRandomPermutation(int sizeN)
+
+        public static QuadraticAssignmentSolution GetIdentity(int n)
+        {
+            if (identities.ContainsKey(n))
+            {
+                return identities[n].Clone();
+            }
+            else
+            {
+                //Create Identity
+                int[] solution = new int[n];
+
+                //Fill the array with numbers from 1 to N.
+                for (int i = 0; i < n; i++)
+                {
+                    solution[i] = i + 1;
+                }
+
+                identities.Add(n, new QuadraticAssignmentSolution(solution));
+
+                return identities[n].Clone();
+            }
+        }
+
+        public static Tuple<int,int>[] GetInversions(int n)
+        {
+            if (inversions.ContainsKey(n))
+            {
+                return inversions[n].ToArray();
+            }
+            else
+            {
+                List<Tuple<int, int>> allInversions = new List<Tuple<int, int>>();
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = i + 1; j < n; j++)
+                    {
+                        allInversions.Add(new Tuple<int, int>(i, j));
+                    }
+                }
+
+                //Save it
+                inversions.Add(n, allInversions);
+
+                return inversions[n].ToArray();
+            }
+        }
+
+        public static int[] GetRandomInversion(int sizeN)
         {
             //Values goes from 0 to n-1 !!
             //Certified no self-permutations
@@ -271,26 +405,7 @@ namespace Metaheuristic.QAP
 
             return inversion;
         }
-
-        #region Private Methods
-        private static bool ArrayAreEquals(int[] a, int[] b)
-        {
-            if (a.Length != b.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < a.Length; i++)
-            {
-                if (a[i] != b[i])
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        
         #endregion
-
     }
 }

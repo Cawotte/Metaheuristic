@@ -203,7 +203,7 @@ namespace Metaheuristic
 
             if (roll < mutationChance)
             {
-                child.ApplyInversion(QuadraticAssignmentSolution.GetRandomPermutation(n));
+                child.ApplyInversion(QuadraticAssignmentSolution.GetRandomInversion(n));
             }
 
             return child;

@@ -39,7 +39,7 @@ namespace Metaheuristic
 
             for (int i = 0; i < count; i++)
             {
-                inversion = QuadraticAssignmentSolution.GetRandomPermutation(n);
+                inversion = QuadraticAssignmentSolution.GetRandomInversion(n);
                 Console.WriteLine(String.Format("({0},{1})", inversion[0], inversion[1]));
             }
         }
