@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace Metaheuristic.QAP
 {
-    public class QuadraticAssignmentSolution
+    public class QuadraticAssignmentSolution : IChromosome
     {
         //Store the Identity Permutation fo size N (Dynamic Programming)
         private static Dictionary<int, QuadraticAssignmentSolution> identities = new Dictionary<int, QuadraticAssignmentSolution>();
@@ -24,7 +24,7 @@ namespace Metaheuristic.QAP
         /// </summary>
         private int[] solution;
         
-        private int score;
+        private int fitness;
         #endregion
 
         #region Properties
@@ -43,8 +43,8 @@ namespace Metaheuristic.QAP
             get => solution[i];
         }
         
-        public int Score { get => score; set => score = value; }
-
+        public int Fitness { get => fitness; set => fitness = value; }
+        
         #endregion
 
         #region Constructors
@@ -90,7 +90,7 @@ namespace Metaheuristic.QAP
             this.n = nums[0];
 
             //Read Best Value
-            this.score = nums[1];
+            this.fitness = nums[1];
 
             //Read Solution
             this.solution = Utils.ReadNextIntegers(file, n);

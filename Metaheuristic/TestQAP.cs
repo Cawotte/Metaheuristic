@@ -16,7 +16,7 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestRecuitSimule();
+            TestAlgorithmGenetic();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -137,8 +137,8 @@ namespace Metaheuristic
                 int evaluation = qap.Evaluate(solution);
 
                 Console.WriteLine("Evaluation      : " + evaluation);
-                Console.WriteLine("Expected result : " + solution.Score);
-                if (evaluation == solution.Score)
+                Console.WriteLine("Expected result : " + solution.Fitness);
+                if (evaluation == solution.Fitness)
                 {
                     Console.WriteLine("SUCCESSFUL");
                 }
