@@ -1,6 +1,6 @@
 ﻿
 
-namespace Metaheuristic
+namespace Metaheuristic.GA
 {
     using Metaheuristic.QAP;
     using System;
@@ -8,7 +8,7 @@ namespace Metaheuristic
     using System.Text;
     using System.Linq;
 
-    public class GeneticAlgorithm : AbstractGeneticAlgorithm<QuadraticAssignmentSolution>
+    public class GeneticAlgorithmQAP : AbstractGeneticAlgorithm<QuadraticAssignmentSolution>
     {
         #region Members
 
@@ -18,11 +18,16 @@ namespace Metaheuristic
 
         #endregion
 
-        public GeneticAlgorithm(QuadratricAssignment problem, int populationSize)
+        public GeneticAlgorithmQAP(QuadratricAssignment problem, 
+                                    int populationSize,
+                                    int maxSteps,
+                                    double mutationChance)
         {
             this.problem = problem;
             this.n = problem.N;
             this.populationSize = populationSize;
+            this.maxSteps = maxSteps;
+            this.mutationChance = mutationChance;
         }
 
         protected override int GetFitness(QuadraticAssignmentSolution solution)

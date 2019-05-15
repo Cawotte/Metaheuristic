@@ -1,6 +1,6 @@
 ﻿
 
-namespace Metaheuristic
+namespace Metaheuristic.GA
 {
     using Metaheuristic.QAP;
     using System;
@@ -10,7 +10,7 @@ namespace Metaheuristic
 
     public abstract class AbstractGeneticAlgorithm<T> where T : IChromosome
     {
-        protected const bool VERBOSE = true;
+        public bool Verbose = true;
 
         #region Members
 
@@ -39,10 +39,13 @@ namespace Metaheuristic
         }
         #endregion
         
-        public T Run(int steps)
+        public T Run()
         {
-            this.maxSteps = steps;
             trackBests = new List<T>();
+
+            {
+                Console.WriteLine("Generation #0...");
+            }
 
             InitializePopulation();
             ComputePopulationFitnesses();
@@ -51,9 +54,9 @@ namespace Metaheuristic
             //While no termintation criteria
             while (step < maxSteps)
             {
-                if (VERBOSE)
+                if (Verbose)
                 {
-                    Console.WriteLine("Step #" + (step+1));
+                    Console.WriteLine("Generation #" + (step+1));
                 }
 
                 //Construct a new population (to enhance)
@@ -81,7 +84,7 @@ namespace Metaheuristic
 
             }
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 PrintBestHistory();
             }
@@ -139,7 +142,7 @@ namespace Metaheuristic
 
             trackBests.Add(BestIndividual);
 
-            if (VERBOSE)
+            if (Verbose)
             {
                 PrintTopFitnesses(5);
             }

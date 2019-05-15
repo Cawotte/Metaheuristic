@@ -7,6 +7,7 @@ namespace Metaheuristic
     using System.Collections.Generic;
     using System.Text;
     using QAP;
+    using GA;
     using System.Linq;
 
     public class TestQAP
@@ -16,12 +17,31 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestAlgorithmGenetic();
+            TestRecuitSimuleGA();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
         }
 
+        private static void TestRecuitSimuleGA()
+        {
+            string problemFilepath = path + "tai12a" + ".dat";
+            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+
+            QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+            QuadraticAssignmentSolution best;
+
+            RecuitSimule recuit = new RecuitSimule(qap);
+
+            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 10, 10, 0.05d);
+
+            ga.Verbose = true;
+            best = ga.Run().InitialSol;
+
+            Console.WriteLine("Best Solution : " + best.ToString());
+            Console.WriteLine("Fitness : " + best.Fitness);
+
+        }
         private static void TestRecuitSimule()
         {
 
@@ -31,9 +51,10 @@ namespace Metaheuristic
             QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
             QuadraticAssignmentSolution best;
             
-            RecuitSimule recuit = new RecuitSimule(qap, 0.9f, 100, 5);
-            best = recuit.Execute(initialSol, 100000);
+            RecuitSimule recuit = new RecuitSimule(qap);
+            best = recuit.Execute(initialSol, 100000, 0.9f, 100, 5);
             
+            /*
             recuit = new RecuitSimule(qap, 0.9f, 100, 5);
             best = recuit.Execute(initialSol, 10000);
             
@@ -53,7 +74,7 @@ namespace Metaheuristic
 
             
             recuit = new RecuitSimule(qap, 0.9f, 100, 20);
-            best = recuit.Execute(initialSol, 1000);
+            best = recuit.Execute(initialSol, 1000);*/
 
 
 
@@ -64,8 +85,8 @@ namespace Metaheuristic
             string problemFilepath = path + "tai12a" + ".dat";
             QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
 
-            GeneticAlgorithm ga = new GeneticAlgorithm(qap, 30);
-            ga.Run(30);
+            //GeneticAlgorithm ga = new GeneticAlgorithm(qap, 30);
+            //ga.Run(30);
         }
         private static void TestRandomInversions()
         {

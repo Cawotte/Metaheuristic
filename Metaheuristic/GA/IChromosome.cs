@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Metaheuristic
+﻿
+namespace Metaheuristic.GA
 {
+
+    /// <summary>
+    /// Interface implemented by classes that can be used for Genetic Algorithms.
+    /// </summary>
     public interface IChromosome
     {
 

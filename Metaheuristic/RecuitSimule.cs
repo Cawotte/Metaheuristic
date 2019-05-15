@@ -10,22 +10,24 @@ namespace Metaheuristic
 
         public bool Verbose = true;
         private QuadratricAssignment qap;
-
-        private float temperatureDecrease;
-        private int maxSteps;
-        private int nbNeighborPerStep;
-
+        
         private Random rnd = new Random();
 
-        public RecuitSimule(QuadratricAssignment problem, float temperatureDecrease, int maxSteps, int nbNeighborPerStep)
+        public int N
+        {
+            get => qap.N;
+        }
+
+        public RecuitSimule(QuadratricAssignment problem)
         {
             this.qap = problem;
-            this.temperatureDecrease = temperatureDecrease;
-            this.maxSteps = maxSteps;
-            this.nbNeighborPerStep = nbNeighborPerStep;
         }
    
-        public QuadraticAssignmentSolution Execute(QuadraticAssignmentSolution initialSol, float initialTemp)
+        public QuadraticAssignmentSolution Execute(QuadraticAssignmentSolution initialSol, 
+                                                    double initialTemp, 
+                                                    double temperatureDecrease, 
+                                                    int maxSteps, 
+                                                    int nbNeighborPerStep)
         {
             //setup
             QuadraticAssignmentSolution current = initialSol;
@@ -35,7 +37,7 @@ namespace Metaheuristic
             int minFitness = qap.Evaluate(current);
 
             //Parameters
-            float temperature = initialTemp;
+            double temperature = initialTemp;
 
             if (Verbose)
             {
@@ -103,5 +105,16 @@ namespace Metaheuristic
             }
             return best;
         }
+
+        public QuadraticAssignmentSolution Execute(RecuitSimuleParameters parameters)
+        {
+            return Execute(parameters.InitialSol,
+                        parameters.InitialTemp,
+                        parameters.TemperatureDecrease,
+                        parameters.MaxSteps,
+                        parameters.NbNeighborPerStep);
+        }
     }
+
+        
 }
