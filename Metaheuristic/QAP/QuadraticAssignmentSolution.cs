@@ -124,7 +124,7 @@ namespace Metaheuristic.QAP
             }
 
             //Shuffle it.
-            Utils.Shuffle(solution);
+            Shuffle(solution);
 
 
         }
@@ -240,11 +240,10 @@ namespace Metaheuristic.QAP
 
         public Tuple<int, int> GetRandomInversion()
         {
-
-            Random rnd = new Random();
+            
             Tuple<int, int>[] inversions = QuadraticAssignmentSolution.GetInversions(n);
 
-            return inversions[rnd.Next(0, inversions.Length)];
+            return inversions[rand.Next(0, inversions.Length)];
         }
         #endregion
 
@@ -407,7 +406,7 @@ namespace Metaheuristic.QAP
             }
 
             //Pick two random
-            Random rnd = new Random();
+            Random rnd = RandomSingleton.Instance.Rand;
             int[] inversion = new int[2];
 
 

@@ -14,11 +14,10 @@ namespace Metaheuristic
         public static RandomSingleton Instance {
             get
             {
-                if (_instance != null)
+                if (_instance == null)
                 {
-                    return _instance;
+                    _instance = new RandomSingleton(0);
                 }
-                _instance = new RandomSingleton(0);
                 return _instance;
             }
         }

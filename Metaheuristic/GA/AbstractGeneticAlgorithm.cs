@@ -24,7 +24,7 @@ namespace Metaheuristic.GA
 
 
         //TODO : TO SEED
-        protected Random rand = new Random();
+        protected Random rand = RandomSingleton.Instance.GetNewSeededRandom();
 
 
         //Calculations

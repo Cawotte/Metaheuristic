@@ -63,7 +63,7 @@ namespace Metaheuristic
         /// Get random parameters
         /// </summary>
         /// <param name="n"></param>
-        public RecuitSimuleParameters(int n, int seed = 0)
+        public RecuitSimuleParameters(int n)
         {
 
             this.InitialSol = GetRandomInitialSol(n);

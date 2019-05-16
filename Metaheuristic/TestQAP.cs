@@ -39,7 +39,7 @@ namespace Metaheuristic
             GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 6, 3, 0.05d);
 
             ga.Verbose = true;
-            best = ga.Run().InitialSol;
+            best = recuit.Execute(ga.Run());
 
             Console.WriteLine("Best Solution : " + best.ToString());
             Console.WriteLine("Fitness : " + best.Fitness);
