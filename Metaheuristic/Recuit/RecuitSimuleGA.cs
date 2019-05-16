@@ -1,9 +1,8 @@
 ﻿
-namespace Metaheuristic
+namespace Metaheuristic.Recuit
 {
 
     using Metaheuristic.GA;
-    using Metaheuristic.QAP;
     using System;
 
     class GeneticAlgorithmRecuit : AbstractGeneticAlgorithm<RecuitSimuleParameters>

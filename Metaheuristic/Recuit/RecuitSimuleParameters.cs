@@ -1,6 +1,6 @@
 ﻿
 
-namespace Metaheuristic
+namespace Metaheuristic.Recuit
 {
     using Metaheuristic.GA;
     using Metaheuristic.QAP;

@@ -1,10 +1,12 @@
-﻿using Metaheuristic.QAP;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Metaheuristic
+﻿
+namespace Metaheuristic.Recuit
 {
+    using Metaheuristic.QAP;
+    using System;
+    using System.Collections.Generic;
+    using System.Text;
+
+
     class RecuitSimule
     {
 

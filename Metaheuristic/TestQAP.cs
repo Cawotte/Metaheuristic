@@ -9,6 +9,7 @@ namespace Metaheuristic
     using QAP;
     using GA;
     using System.Linq;
+    using Metaheuristic.Recuit;
 
     public class TestQAP
     {
@@ -17,7 +18,8 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestRecuitSimuleGA();
+            TestAlgorithmGenetic();
+            //TestRecuitSimuleGA();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -88,8 +90,16 @@ namespace Metaheuristic
             string problemFilepath = path + "tai12a" + ".dat";
             QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
 
-            //GeneticAlgorithm ga = new GeneticAlgorithm(qap, 30);
-            //ga.Run(30);
+            //Seed it!
+            RandomSingleton.Instance.Seed = 0;
+
+            GeneticAlgorithmQAP ga = new GeneticAlgorithmQAP(qap, 100, 50, 0.05d, 2, 10);
+
+            ga.Verbose = true;
+            QuadraticAssignmentSolution best = ga.Run();
+
+            Console.WriteLine("Best Solution : " + best.ToString());
+            Console.WriteLine("Fitness : " + best.Fitness);
         }
         private static void TestRandomInversions()
         {

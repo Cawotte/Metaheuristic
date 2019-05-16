@@ -192,6 +192,11 @@ namespace Metaheuristic.QAP
 
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inversion"></param>
+        /// <returns>Self with the inversion</returns>
         public QuadraticAssignmentSolution ApplyInversion(int[] inversion)
         {
             if (inversion.Length != 2)
