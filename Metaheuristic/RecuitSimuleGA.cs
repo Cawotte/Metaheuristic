@@ -13,16 +13,17 @@ namespace Metaheuristic
 
         private Random rand = new Random();
 
-        public GeneticAlgorithmRecuit(RecuitSimule problem, 
+        public GeneticAlgorithmRecuit(RecuitSimule problem,
                                     int populationSize,
                                     int maxSteps,
-                                    double mutationChance)
+                                    double mutationChance,
+                                    int elitism = 0,
+                                    int newBlood = 0
+                                    ) :
+            base(populationSize, maxSteps, mutationChance, elitism, newBlood) //Super constructor
         {
             this.problem = problem;
             this.problem.Verbose = false;
-            this.populationSize = populationSize;
-            this.maxSteps = maxSteps;
-            this.mutationChance = mutationChance;
         }
 
         protected override RecuitSimuleParameters[] Crossover(RecuitSimuleParameters parent1, RecuitSimuleParameters parent2)

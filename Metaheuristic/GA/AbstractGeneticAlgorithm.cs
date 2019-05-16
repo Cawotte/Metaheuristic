@@ -19,6 +19,9 @@ namespace Metaheuristic.GA
         protected double mutationChance = 0.05d;
         protected int maxSteps;
 
+        protected int elitism = 0; //TODO
+        protected int newBlood = 0; //TODO
+
 
         //TODO : TO SEED
         protected Random rand = new Random();
@@ -38,7 +41,21 @@ namespace Metaheuristic.GA
             get => population[0];
         }
         #endregion
-        
+
+        protected AbstractGeneticAlgorithm(
+                                    int populationSize,
+                                    int maxSteps,
+                                    double mutationChance,
+                                    int elitism = 0,
+                                    int newBlood = 0)
+        {
+            this.populationSize = populationSize;
+            this.maxSteps = maxSteps;
+            this.mutationChance = mutationChance;
+            this.elitism = elitism;
+            this.newBlood = newBlood;
+        }
+
         public T Run()
         {
             trackBests = new List<T>();
