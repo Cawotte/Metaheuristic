@@ -14,7 +14,8 @@ namespace Metaheuristic
     class RecuitSimuleParameters : IChromosome
     {
 
-        static Random rand = new Random();
+        private Random rand = new Random();
+        public int Seed = 0;
 
         //Parameters
         public QuadraticAssignmentSolution InitialSol;
@@ -35,13 +36,17 @@ namespace Metaheuristic
                                                     double initialTemp,
                                                     double temperatureDecrease,
                                                     int maxSteps,
-                                                    int nbNeighborPerStep)
+                                                    int nbNeighborPerStep,
+                                                    int seed = 0)
         {
             this.InitialSol = initialSol;
             this.InitialTemp = initialTemp;
             this.TemperatureDecrease = temperatureDecrease;
             this.MaxSteps = maxSteps;
             this.NbNeighborPerStep = nbNeighborPerStep;
+
+            this.Seed = seed;
+            this.rand = new Random(seed);
         }
 
         /// <summary>
@@ -55,14 +60,22 @@ namespace Metaheuristic
             this.TemperatureDecrease = param.TemperatureDecrease;
             this.MaxSteps = param.MaxSteps;
             this.NbNeighborPerStep = param.NbNeighborPerStep;
+        
+
+            this.Seed = param.Seed;
+            this.rand = new Random(Seed);
         }
 
         /// <summary>
         /// Get random parameters
         /// </summary>
         /// <param name="n"></param>
-        public RecuitSimuleParameters(int n)
+        public RecuitSimuleParameters(int n, int seed = 0)
         {
+            //Random seed
+            this.Seed = seed;
+            this.rand = new Random(seed);
+
             this.InitialSol = GetRandomInitialSol(n);
             this.InitialTemp = GetRandomInitialTemp();
             this.TemperatureDecrease = GetRandomTemperatureDecrease();
@@ -70,27 +83,27 @@ namespace Metaheuristic
             this.NbNeighborPerStep = GetRandomNeighborStep();
         }
 
-        public static QuadraticAssignmentSolution GetRandomInitialSol(int n)
+        public QuadraticAssignmentSolution GetRandomInitialSol(int n)
         {
             return new QuadraticAssignmentSolution(n);
         }
 
-        public static double GetRandomInitialTemp()
+        public double GetRandomInitialTemp()
         {
             return rand.NextDouble() * 100000d;
         }
 
-        public static double GetRandomTemperatureDecrease()
+        public double GetRandomTemperatureDecrease()
         {
             return rand.NextDouble();
         }
 
-        public static int GetRandomMaxStep()
+        public int GetRandomMaxStep()
         {
             return rand.Next(10, 10000);
         }
 
-        public static int GetRandomNeighborStep()
+        public int GetRandomNeighborStep()
         {
             return rand.Next(5, 25);
         }

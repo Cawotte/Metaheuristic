@@ -25,6 +25,8 @@ namespace Metaheuristic.GA
 
         //TODO : TO SEED
         protected Random rand = new Random();
+        protected int seed = 0;
+
 
         //Calculations
         protected T[] population;
@@ -47,13 +49,16 @@ namespace Metaheuristic.GA
                                     int maxSteps,
                                     double mutationChance,
                                     int elitism = 0,
-                                    int newBlood = 0)
+                                    int newBlood = 0,
+                                    int seed = 0)
         {
             this.populationSize = populationSize;
             this.maxSteps = maxSteps;
             this.mutationChance = mutationChance;
             this.elitism = elitism;
             this.newBlood = newBlood;
+            this.seed = seed;
+            this.rand = new Random(seed);
         }
 
         public T Run()
@@ -63,7 +68,6 @@ namespace Metaheuristic.GA
             {
                 Console.WriteLine("Generation #0...");
             }
-
             InitializePopulation();
             ComputePopulationFitnesses();
 

@@ -26,6 +26,8 @@ namespace Metaheuristic.QAP
         private int[] solution;
         
         private int fitness;
+
+        private Random rand = new Random();
         #endregion
 
         #region Properties
@@ -330,6 +332,20 @@ namespace Metaheuristic.QAP
             return IsValid(Utils.ParseStringToIntArray(solution));
         }
 
+        public static void Shuffle<T>(T[] array)
+        {
+            //Quick and poor shuffler, it can be faster + should be able to use a seed.
+            ///TODO : Rework shuffler into something better
+
+            //Randomly swap spots.
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                int j = rand.Next(i, array.Length);
+                T temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+        }
 
         public static QuadraticAssignmentSolution GetIdentity(int n)
         {

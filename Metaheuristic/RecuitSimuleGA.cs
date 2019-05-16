@@ -11,16 +11,14 @@ namespace Metaheuristic
 
         public RecuitSimule problem;
 
-        private Random rand = new Random();
-
         public GeneticAlgorithmRecuit(RecuitSimule problem,
                                     int populationSize,
                                     int maxSteps,
                                     double mutationChance,
                                     int elitism = 0,
-                                    int newBlood = 0
-                                    ) :
-            base(populationSize, maxSteps, mutationChance, elitism, newBlood) //Super constructor
+                                    int newBlood = 0,
+                                    int seed = 0) :
+            base(populationSize, maxSteps, mutationChance, elitism, newBlood, seed) //Super constructor
         {
             this.problem = problem;
             this.problem.Verbose = false;
@@ -76,19 +74,19 @@ namespace Metaheuristic
             int choice = rand.Next(0, 5);
             switch (choice) {
                 case 0:
-                    child.InitialSol = RecuitSimuleParameters.GetRandomInitialSol(problem.N);
+                    child.InitialSol = child.GetRandomInitialSol(problem.N);
                     break;
                 case 1:
-                    child.InitialTemp = RecuitSimuleParameters.GetRandomInitialTemp();
+                    child.InitialTemp = child.GetRandomInitialTemp();
                     break;
                 case 2:
-                    child.TemperatureDecrease = RecuitSimuleParameters.GetRandomTemperatureDecrease();
+                    child.TemperatureDecrease = child.GetRandomTemperatureDecrease();
                     break;
                 case 3:
-                    child.MaxSteps = RecuitSimuleParameters.GetRandomMaxStep();
+                    child.MaxSteps = child.GetRandomMaxStep();
                     break;
                 case 4:
-                    child.NbNeighborPerStep = RecuitSimuleParameters.GetRandomNeighborStep();
+                    child.NbNeighborPerStep = child.GetRandomNeighborStep();
                     break;
             }
 
