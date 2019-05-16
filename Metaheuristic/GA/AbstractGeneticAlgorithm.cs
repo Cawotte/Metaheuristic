@@ -56,6 +56,11 @@ namespace Metaheuristic.GA
             this.elitism = elitism;
             this.newBlood = newBlood;
 
+            if (elitism + newBlood >= populationSize)
+            {
+                throw new InvalidGAException("There can't be more elitism and new blood than population size!");
+            }
+
             this.rand = RandomSingleton.Instance.GetNewSeededRandom();
         }
 
@@ -67,7 +72,7 @@ namespace Metaheuristic.GA
                 Console.WriteLine("Generation #0...");
             }
             InitializePopulation();
-            ComputePopulationFitnesses();
+            ComputePopulationFitnesses(true);
 
             int step = 0;
             //While no termintation criteria
@@ -80,18 +85,35 @@ namespace Metaheuristic.GA
 
                 //Construct a new population (to enhance)
                 T[] newPopulation = new T[populationSize];
-                
+
+                int newChildEndIndex = populationSize - newBlood;
+
+                //Elitism : We keep the first #elitism best ones.
+                for (int i = 0; i < elitism; i++)
+                {
+                    newPopulation[i] = population[i];
+                }
+
                 //Make a child for all the population.
-                for (int i = 0; i < populationSize; i += 2)
+                for (int i = elitism; i < newChildEndIndex; i += 2)
                 {
                     T[] childs = Crossover(SelectParents());
+
                     newPopulation[i] = TryMutate(childs[0]);
 
                     //Test in case the population size is odd
-                    if (i != populationSize)
+                    if (i + 1 == newChildEndIndex)
                     {
-                        newPopulation[i + 1] = TryMutate(childs[1]);
+                        break;
                     }
+
+                    newPopulation[i + 1] = TryMutate(childs[1]);
+                }
+
+                //We generate #newBlood new individuals that are not made from parents. (New Blood)
+                for (int i = newChildEndIndex; i < populationSize; i++)
+                {
+                    newPopulation[i] = GenerateIndividual();
                 }
 
                 population = newPopulation;
@@ -146,15 +168,18 @@ namespace Metaheuristic.GA
         }
 
 
-        protected void ComputePopulationFitnesses()
+        protected void ComputePopulationFitnesses(bool isFirstGen = false)
         {
-            for (int i = 0; i < populationSize; i++)
+            //If it's the first gen, we compute all Fitness. Else we skip the elites ones we already know.
+            int startIndex = isFirstGen ? 0 : elitism;
+
+            for (int i = startIndex; i < populationSize; i++)
             {
                 population[i].Fitness = GetFitness(population[i]);
             }
 
             //Sort by Score (Thanks LINQ)
-            population.OrderByDescending(individual => individual.Fitness);
+            population = population.OrderBy(individual => individual.Fitness).ToArray();
 
             sumFitnesses = population.Sum(individual => individual.Fitness);
             //Make it return best score?

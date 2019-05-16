@@ -3,8 +3,6 @@
 namespace Metaheuristic.QAP
 {
     using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     public class InvalidQAPException : Exception
     {

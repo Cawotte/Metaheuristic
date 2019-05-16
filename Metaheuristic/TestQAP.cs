@@ -36,7 +36,7 @@ namespace Metaheuristic
 
             RecuitSimule recuit = new RecuitSimule(qap);
 
-            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 6, 3, 0.05d);
+            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 6, 3, 0.05d, 2, 1);
 
             ga.Verbose = true;
             best = recuit.Execute(ga.Run());
