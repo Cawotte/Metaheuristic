@@ -28,12 +28,15 @@ namespace Metaheuristic
             string problemFilepath = path + "tai12a" + ".dat";
             QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
 
+            //Seed it!
+            RandomSingleton.Instance.Seed = 0;
+
             QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
             QuadraticAssignmentSolution best;
 
             RecuitSimule recuit = new RecuitSimule(qap);
 
-            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 10, 10, 0.05d);
+            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 6, 3, 0.05d);
 
             ga.Verbose = true;
             best = ga.Run().InitialSol;

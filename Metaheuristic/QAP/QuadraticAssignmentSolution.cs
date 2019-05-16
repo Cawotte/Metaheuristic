@@ -27,7 +27,7 @@ namespace Metaheuristic.QAP
         
         private int fitness;
 
-        private Random rand = new Random();
+        private Random rand = RandomSingleton.Instance.GetNewSeededRandom();
         #endregion
 
         #region Properties
@@ -332,7 +332,7 @@ namespace Metaheuristic.QAP
             return IsValid(Utils.ParseStringToIntArray(solution));
         }
 
-        public static void Shuffle<T>(T[] array)
+        public void Shuffle<T>(T[] array)
         {
             //Quick and poor shuffler, it can be faster + should be able to use a seed.
             ///TODO : Rework shuffler into something better

@@ -23,9 +23,8 @@ namespace Metaheuristic.GA
                                     int maxSteps,
                                     double mutationChance,
                                     int elitism = 0,
-                                    int newBlood = 0,
-                                    int seed = 0) :
-            base(populationSize, maxSteps, mutationChance, elitism, newBlood, seed) //Super constructor
+                                    int newBlood = 0) :
+            base(populationSize, maxSteps, mutationChance, elitism, newBlood) //Super constructor
         {
             this.problem = problem;
             this.n = problem.N;

@@ -14,8 +14,7 @@ namespace Metaheuristic
     class RecuitSimuleParameters : IChromosome
     {
 
-        private Random rand = new Random();
-        public int Seed = 0;
+        private Random rand = RandomSingleton.Instance.GetNewSeededRandom();
 
         //Parameters
         public QuadraticAssignmentSolution InitialSol;
@@ -36,17 +35,14 @@ namespace Metaheuristic
                                                     double initialTemp,
                                                     double temperatureDecrease,
                                                     int maxSteps,
-                                                    int nbNeighborPerStep,
-                                                    int seed = 0)
+                                                    int nbNeighborPerStep)
         {
             this.InitialSol = initialSol;
             this.InitialTemp = initialTemp;
             this.TemperatureDecrease = temperatureDecrease;
             this.MaxSteps = maxSteps;
             this.NbNeighborPerStep = nbNeighborPerStep;
-
-            this.Seed = seed;
-            this.rand = new Random(seed);
+            
         }
 
         /// <summary>
@@ -60,10 +56,7 @@ namespace Metaheuristic
             this.TemperatureDecrease = param.TemperatureDecrease;
             this.MaxSteps = param.MaxSteps;
             this.NbNeighborPerStep = param.NbNeighborPerStep;
-        
-
-            this.Seed = param.Seed;
-            this.rand = new Random(Seed);
+            
         }
 
         /// <summary>
@@ -72,9 +65,6 @@ namespace Metaheuristic
         /// <param name="n"></param>
         public RecuitSimuleParameters(int n, int seed = 0)
         {
-            //Random seed
-            this.Seed = seed;
-            this.rand = new Random(seed);
 
             this.InitialSol = GetRandomInitialSol(n);
             this.InitialTemp = GetRandomInitialTemp();

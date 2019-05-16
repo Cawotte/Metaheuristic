@@ -11,7 +11,7 @@ namespace Metaheuristic
         public bool Verbose = true;
         private QuadratricAssignment qap;
         
-        private Random rnd = new Random();
+        private Random rnd = RandomSingleton.Instance.GetNewSeededRandom();
 
         public int N
         {
