@@ -39,8 +39,15 @@ namespace Metaheuristic.GA
         {
 
             QuadraticAssignmentSolution[] childs = new QuadraticAssignmentSolution[2];
-            childs[0] = parent1 * parent2;
-            childs[1] = parent2 * parent1;
+            int power = rand.Next(5);
+
+            childs[0] = QuadraticAssignmentSolution.Power(parent1, parent2, power);
+
+            power = rand.Next(5);
+            childs[1] = QuadraticAssignmentSolution.Power(parent2, parent1, power);
+
+            //childs[0] = parent1 * parent2;
+            //childs[1] = parent2 * parent1;
 
             return childs;
         }

@@ -27,7 +27,7 @@ namespace Metaheuristic.QAP
         
         private int fitness;
 
-        private Random rand = RandomSingleton.Instance.GetNewSeededRandom();
+        private Random rand = RandomSingleton.Instance.Rand;
         #endregion
 
         #region Properties
@@ -295,6 +295,17 @@ namespace Metaheuristic.QAP
             }
 
             return new QuadraticAssignmentSolution(product);
+        }
+
+        public static QuadraticAssignmentSolution Power(QuadraticAssignmentSolution p1, QuadraticAssignmentSolution p2, int power)
+        {
+            QuadraticAssignmentSolution product = new QuadraticAssignmentSolution(p1); 
+            for (int i = 0; i < power; i++)
+            {
+                product *= p2;
+            }
+
+            return product;
         }
 
         /// <summary>

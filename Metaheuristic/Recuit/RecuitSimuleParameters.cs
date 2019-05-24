@@ -73,6 +73,7 @@ namespace Metaheuristic.Recuit
             this.NbNeighborPerStep = GetRandomNeighborStep();
         }
 
+
         public QuadraticAssignmentSolution GetRandomInitialSol(int n)
         {
             return new QuadraticAssignmentSolution(n);
@@ -90,12 +91,28 @@ namespace Metaheuristic.Recuit
 
         public int GetRandomMaxStep()
         {
-            return rand.Next(10, 10000);
+            return rand.Next(10, 2000);
         }
 
         public int GetRandomNeighborStep()
         {
             return rand.Next(5, 25);
+        }
+
+
+
+        public override string ToString()
+        {
+            string str = "";
+            str += "\nN : " + InitialSol.N;
+            str += "\nS0 : " + InitialSol.ToString();
+            str += "\nT0 : " + String.Format("{0:0.00}", InitialTemp);
+            str += "\nTemp_Decrease : " + String.Format("{0:0.00}", TemperatureDecrease);
+            str += "\nMaxSteps : " + MaxSteps;
+            str += "\nNeighbors per Step : " + NbNeighborPerStep;
+            str += "\n";
+
+            return str;
         }
         #endregion
     }

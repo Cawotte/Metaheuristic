@@ -34,15 +34,17 @@ namespace Metaheuristic
             RandomSingleton.Instance.Seed = 0;
 
             QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
-            QuadraticAssignmentSolution best;
 
             RecuitSimule recuit = new RecuitSimule(qap);
 
-            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 6, 3, 0.05d, 2, 1);
+            GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 40, 15, 0.05d, 1, 3);
 
             ga.Verbose = true;
-            best = recuit.Execute(ga.Run());
+            ga.WithLogs = true;
+            RecuitSimuleParameters bestParam = ga.Run();
+            QuadraticAssignmentSolution best = recuit.Execute(bestParam);
 
+            Console.WriteLine("Best Params : " + bestParam.ToString());
             Console.WriteLine("Best Solution : " + best.ToString());
             Console.WriteLine("Fitness : " + best.Fitness);
 
@@ -96,6 +98,7 @@ namespace Metaheuristic
             GeneticAlgorithmQAP ga = new GeneticAlgorithmQAP(qap, 100, 50, 0.05d, 2, 10);
 
             ga.Verbose = true;
+            ga.WithLogs = true;
             QuadraticAssignmentSolution best = ga.Run();
 
             Console.WriteLine("Best Solution : " + best.ToString());

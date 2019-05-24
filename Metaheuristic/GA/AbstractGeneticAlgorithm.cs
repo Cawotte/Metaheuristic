@@ -11,6 +11,9 @@ namespace Metaheuristic.GA
     public abstract class AbstractGeneticAlgorithm<T> where T : IChromosome
     {
         public bool Verbose = true;
+        public bool WithLogs = true;
+
+
 
         #region Members
 
@@ -19,11 +22,10 @@ namespace Metaheuristic.GA
         protected double mutationChance = 0.05d;
         protected int maxSteps;
 
-        protected int elitism = 0; //TODO
-        protected int newBlood = 0; //TODO
+        protected int elitism = 0;
+        protected int newBlood = 0;
 
-
-        //TODO : TO SEED
+        
         protected Random rand = RandomSingleton.Instance.GetNewSeededRandom();
 
 
@@ -33,6 +35,7 @@ namespace Metaheuristic.GA
 
         //Other
         protected List<T> trackBests = new List<T>();
+        protected GALogs<T> logs;
 
         #endregion
 
@@ -60,19 +63,28 @@ namespace Metaheuristic.GA
             {
                 throw new InvalidGAException("There can't be more elitism and new blood than population size!");
             }
-
-            this.rand = RandomSingleton.Instance.GetNewSeededRandom();
+            
         }
 
         public T Run()
         {
             trackBests = new List<T>();
 
+            if (Verbose)
             {
                 Console.WriteLine("Generation #0...");
             }
+
             InitializePopulation();
             ComputePopulationFitnesses(true);
+
+            if (WithLogs)
+            {
+                logs = new GALogs<T>();
+                logs.AddStep(population);
+                if ( Verbose )
+                    Console.WriteLine(logs.Last.ToString());
+            }
 
             int step = 0;
             //While no termintation criteria
@@ -121,14 +133,23 @@ namespace Metaheuristic.GA
                 //New Fitness
                 ComputePopulationFitnesses();
 
+                if (WithLogs)
+                {
+                    logs.AddStep(population);
+                    if (Verbose)
+                        Console.WriteLine(logs.Last.ToString());
+                }
+
                 step++;
 
             }
-
-            if (Verbose)
+            if (WithLogs)
             {
-                PrintBestHistory();
+                logs.AddFinalLog();
+                if (Verbose)
+                    Console.WriteLine("#Final Log :" + logs.FinalLog.ToStringFinalLog());
             }
+
             return BestIndividual;
             /***
              * initialize population
@@ -188,7 +209,7 @@ namespace Metaheuristic.GA
 
             if (Verbose)
             {
-                PrintTopFitnesses(5);
+                //PrintTopFitnesses(5);
             }
         }
 
