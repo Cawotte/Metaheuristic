@@ -10,6 +10,7 @@ namespace Metaheuristic
     using GA;
     using System.Linq;
     using Metaheuristic.Recuit;
+    using Metaheuristic.MethodeTabou;
 
     public class TestQAP
     {
@@ -18,11 +19,45 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestAlgorithmGenetic();
+            TestTabou();
             //TestRecuitSimuleGA();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
+        }
+
+        private static void TestTupleEquals()
+        {
+            Tuple<int, int> t1 = new Tuple<int, int>(0, 4);
+            Tuple<int, int> t2 = new Tuple<int, int>(0, 4);
+            Tuple<int, int> t3 = new Tuple<int, int>(4, 4);
+
+            DisplaySuccess(t1.Equals(t2));
+
+            DisplaySuccess(!t1.Equals(t3));
+            
+        }
+
+        private static void TestTabou()
+        {
+            string problemFilepath = path + "tai80a" + ".dat";
+            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+
+            //Seed it!
+            RandomSingleton.Instance.Seed = 0;
+            QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+
+            Tabou tabou = new Tabou(qap);
+            tabou.Verbose = true;
+
+            QuadraticAssignmentSolution best = tabou.Run(
+                initialSol,
+                300,
+                100);
+
+            Console.WriteLine("Best : " + best.ToString());
+            Console.WriteLine("Fitness : " + best.Fitness);
+
         }
 
         private static void TestRecuitSimuleGA()
@@ -45,7 +80,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution best = recuit.Execute(bestParam);
 
             Console.WriteLine("Best Params : " + bestParam.ToString());
-            Console.WriteLine("Best Solution : " + best.ToString());
+            Console.WriteLine("\nBest Solution : " + best.ToString());
             Console.WriteLine("Fitness : " + best.Fitness);
 
         }

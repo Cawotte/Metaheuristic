@@ -74,6 +74,7 @@ namespace Metaheuristic.Recuit
         }
 
 
+        #endregion
         public QuadraticAssignmentSolution GetRandomInitialSol(int n)
         {
             return new QuadraticAssignmentSolution(n);
@@ -101,6 +102,7 @@ namespace Metaheuristic.Recuit
 
 
 
+
         public override string ToString()
         {
             string str = "";
@@ -114,6 +116,5 @@ namespace Metaheuristic.Recuit
 
             return str;
         }
-        #endregion
     }
 }

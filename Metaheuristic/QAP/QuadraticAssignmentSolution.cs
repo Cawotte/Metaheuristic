@@ -220,6 +220,18 @@ namespace Metaheuristic.QAP
 
         }
 
+        public QuadraticAssignmentSolution[] GetNeighbors(Tuple<int, int>[] inversions)
+        {
+            QuadraticAssignmentSolution[] neighborhood = new QuadraticAssignmentSolution[inversions.Length];
+
+            for (int i = 0; i < neighborhood.Length; i++)
+            {
+                neighborhood[i] = GetNeighbor(inversions[i]);
+            }
+
+            return neighborhood;
+        }
+
         public QuadraticAssignmentSolution GetNeighbor(Tuple<int, int> inversion)
         {
             if (!IsValidInversion(inversion) )
@@ -241,6 +253,17 @@ namespace Metaheuristic.QAP
         public QuadraticAssignmentSolution GetRandomNeighbor()
         {
             return GetNeighbor(GetRandomInversion());
+        }
+
+        /// <summary>
+        /// Get a random adjacent neighbor of the solution
+        /// </summary>
+        /// <param name="inversion">Store the inversion picked to get the new neighbor</param>
+        /// <returns></returns>
+        public QuadraticAssignmentSolution GetRandomNeighbor(out Tuple<int, int> inversion)
+        {
+            inversion = GetRandomInversion();
+            return GetNeighbor(inversion);
         }
 
         public Tuple<int, int> GetRandomInversion()

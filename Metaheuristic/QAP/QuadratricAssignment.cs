@@ -116,7 +116,17 @@ namespace Metaheuristic.QAP
 
         }
 
-       
+        /// <summary>
+        /// Compute and save the fitness of all solutions
+        /// </summary>
+        /// <param name="solutions"></param>
+        public void Evaluate(QuadraticAssignmentSolution[] solutions)
+        {
+            for (int i = 0; i < solutions.Length; i++)
+            {
+                solutions[i].Fitness = Evaluate(solutions[i]);
+            }
+        }
         public override string ToString()
         {
             string str = "";
