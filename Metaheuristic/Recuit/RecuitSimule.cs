@@ -15,10 +15,13 @@ namespace Metaheuristic.Recuit
         
         private Random rnd = RandomSingleton.Instance.GetNewSeededRandom();
 
+        private RecuitLogs logs;
+
         public int N
         {
             get => qap.N;
         }
+        public RecuitLogs Logs { get => logs; }
 
         public RecuitSimule(QuadratricAssignment problem)
         {
@@ -41,6 +44,10 @@ namespace Metaheuristic.Recuit
             //Parameters
             double temperature = initialTemp;
 
+            //Init logs
+            logs = new RecuitLogs();
+            logs.AddStep(current, best, temperature);
+
             if (Verbose)
             {
                 Console.WriteLine("\n---- RECUIT SIMULE :");
@@ -55,9 +62,12 @@ namespace Metaheuristic.Recuit
 
             for (int i = 0; i < maxSteps; i++)
             {
-
-                //Try X neighbors at that temperature
-                for (int j = 0; j < nbNeighborPerStep; j++)
+                if (Verbose)
+                {
+                    Console.WriteLine("Step #" + (i + 1));
+                }
+                    //Try X neighbors at that temperature
+                    for (int j = 0; j < nbNeighborPerStep; j++)
                 {
 
                     //Randomly get a neighbor
@@ -95,16 +105,21 @@ namespace Metaheuristic.Recuit
 
                 //Temperature decrease
                 temperature = temperatureDecrease * temperature;
+
+
+                logs.AddStep(current, best, temperature);
             }
+
+            logs.AddFinalLog();
 
             if (Verbose)
             {
-
                 Console.WriteLine("---- Meilleur résultat :");
                 Console.WriteLine(best.ToString());
                 Console.WriteLine(minFitness);
                 Console.WriteLine("---- FIN");
             }
+
             return best;
         }
 

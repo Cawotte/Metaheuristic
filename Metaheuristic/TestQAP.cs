@@ -19,8 +19,9 @@ namespace Metaheuristic
 
         static void Main(string[] args)
         {
-            TestTabou();
+            //TestTabou();
             //TestRecuitSimuleGA();
+            TestRecuitSimule();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -102,8 +103,11 @@ namespace Metaheuristic
             QuadraticAssignmentSolution best;
             
             RecuitSimule recuit = new RecuitSimule(qap);
-            best = recuit.Execute(initialSol, 100000, 0.9f, 100, 5);
-            
+            best = recuit.Execute(initialSol, 70000, 0.85f, 200, 5);
+
+            Console.WriteLine(recuit.Logs.FinalLog.ToString());
+            Console.WriteLine(recuit.Logs.ToStringImprovements());
+
             /*
             recuit = new RecuitSimule(qap, 0.9f, 100, 5);
             best = recuit.Execute(initialSol, 10000);

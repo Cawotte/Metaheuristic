@@ -1,29 +1,27 @@
 ﻿
-
-namespace Metaheuristic.MethodTabou
+namespace Metaheuristic.Recuit
 {
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using System.Linq;
     using Metaheuristic.QAP;
 
-    public class TabouLogs
+    public class RecuitLogs
     {
-        private List<LogTabou> logs = new List<LogTabou>();
-        private LastLogTabou finalLog;
+        private List<LogRecuit> logs = new List<LogRecuit>();
+        private LastLogRecuit finalLog;
 
-        public LogTabou Last
+        public LogRecuit Last
         {
             get => logs[logs.Count - 1];
         }
 
-        public LogTabou this[int index]
+        public LogRecuit this[int index]
         {
             get => logs[index];
         }
 
-        public LastLogTabou FinalLog
+        public LastLogRecuit FinalLog
         {
             get => finalLog;
         }
@@ -33,9 +31,9 @@ namespace Metaheuristic.MethodTabou
             get => logs.Count;
         }
 
-        public void AddStep(QuadraticAssignmentSolution current, QuadraticAssignmentSolution best, int currentTabouSize)
+        public void AddStep(QuadraticAssignmentSolution current, QuadraticAssignmentSolution best, double currentTemp)
         {
-            LogTabou step = new LogTabou();
+            LogRecuit step = new LogRecuit();
 
             step.Step = logs.Count;
 
@@ -45,20 +43,31 @@ namespace Metaheuristic.MethodTabou
             step.Best = best;
             step.BestFitness = best.Fitness;
 
-            step.CurrentTabouSize = currentTabouSize;
+            step.CurrentTemp = currentTemp;
 
             //If it's not the first step, does uphill and improvements
             if (logs.Count > 0)
             {
                 //Uphill depends on if the solution is improving or not. 0 = improving
-                step.HasImproved = (current.Fitness < Last.CurrentFitness );
+                if (current.Fitness < Last.CurrentFitness)
+                {
+                    step.HasImproved = -1;
+                }
+                else if (current.Fitness > Last.CurrentFitness)
+                {
+                    step.HasImproved = 1;
+                }
+                else
+                {
+                    step.HasImproved = 0;
+                }
 
                 step.BestImprovement = GetImprovement(Last.BestFitness, best.Fitness);
                 step.CurrentImprovement = GetImprovement(Last.CurrentFitness, current.Fitness);
             }
             else
             {
-                step.HasImproved = false;
+                step.HasImproved = 0;
                 step.BestImprovement = 0d;
                 step.CurrentImprovement = 0d;
             }
@@ -69,35 +78,26 @@ namespace Metaheuristic.MethodTabou
 
         public void AddFinalLog()
         {
-            LastLogTabou final = new LastLogTabou();
+            LastLogRecuit final = new LastLogRecuit();
 
             //Best Individual
             final.Best = Last.Best;
-            final.BestFitness = Last.BestFitness; 
+            final.BestFitness = Last.BestFitness;
 
             //Improvement between first and best
             final.BestImprovement = GetImprovement(logs[0].BestFitness, Last.BestFitness);
 
-            final.Downhills = 0;
-            final.Uphills = 0;
+            final.FinalTemperature = Last.CurrentTemp;
+
+            final.NbWorsePicked = 0;
             for (int i = 1; i < logs.Count; i++)
             {
-                //When there's an "hill" change
-                if (logs[i].HasImproved != logs[i-1].HasImproved)
+                if (logs[i].HasImproved == 1)
                 {
-                    //If it's starting to improve now, we just finished a downhill
-                    if (logs[i].HasImproved)
-                    {
-                        final.Downhills++;
-                    }
-                    else
-                    {
-                        final.Uphills++;
-                    }
+                    final.NbWorsePicked++;
                 }
             }
 
-            final.AverageTabouSize = (int)logs.Average(log => log.CurrentTabouSize);
 
             //save it
             finalLog = final;
@@ -109,14 +109,17 @@ namespace Metaheuristic.MethodTabou
             string str = "";
             for (int i = 0; i < logs.Count; i++)
             {
-                if (logs[i].HasImproved)
+                switch (logs[i].HasImproved)
                 {
-                    str += "+";
-                }
-                else
-                {
-
-                    str += "-";
+                    case 0:
+                        str += "o";
+                        break;
+                    case 1:
+                        str += "+";
+                        break;
+                    case -1:
+                        str += "-";
+                        break;
                 }
             }
 
@@ -129,11 +132,11 @@ namespace Metaheuristic.MethodTabou
             return Math.Round((1d - (double)newFitness / (double)lastFitness) * 100, 4);
         }
 
-        public struct LogTabou
+        public struct LogRecuit
         {
             public int Step;
 
-            public bool HasImproved;
+            public int HasImproved;
 
             //current sol
             public QuadraticAssignmentSolution Current;
@@ -146,18 +149,14 @@ namespace Metaheuristic.MethodTabou
             public double BestImprovement;
 
             //Forbidden list
-            public int CurrentTabouSize;
-        
+            public double CurrentTemp;
+
 
             public override string ToString()
             {
                 string str = "";
                 str += "\nStep #" + Step;
-                if (HasImproved)
-                {
-                    str += "\nCurrent has improved";
-                }
-                str += "\nCurrent Tabou Size : " + CurrentTabouSize;
+                str += "\nCurrent Temperature : " + CurrentTemp;
 
                 str += "\nCurrent : " + Current.ToString();
                 str += "\nCurrent Fitness : " + CurrentFitness;
@@ -166,7 +165,7 @@ namespace Metaheuristic.MethodTabou
                 str += "\nBest : " + Best.ToString();
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nBest Improvement : " + BestImprovement + "%";
-                
+
                 str += "\n";
 
                 return str;
@@ -174,31 +173,26 @@ namespace Metaheuristic.MethodTabou
 
         }
 
-        public struct LastLogTabou
+        public struct LastLogRecuit
         {
             //Best found and improvements
             public QuadraticAssignmentSolution Best;
             public int BestFitness;
             public double BestImprovement;
 
-            public int Uphills;
-            public int Downhills;
-
-            //tabou size
-            public int AverageTabouSize;
+            public double FinalTemperature;
+            public int NbWorsePicked;
 
             public override string ToString()
             {
                 string str = "";
-                str += "\nAverage Tabou Size : " + AverageTabouSize;
+                str += "\nFinal Temperature: " + FinalTemperature;
+                str += "\nNb Worse Picks : " + NbWorsePicked;
 
                 str += "\nBest Solution : " + Best.ToString();
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nTotal Improvement : " + BestImprovement + "%";
 
-
-                str += "\nNb Uphills : " + Uphills;
-                str += "\nNb Downhills : " + Uphills;
 
                 str += "\n";
 
