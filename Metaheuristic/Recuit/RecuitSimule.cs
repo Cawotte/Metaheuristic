@@ -105,9 +105,15 @@ namespace Metaheuristic.Recuit
 
                 //Temperature decrease
                 temperature = temperatureDecrease * temperature;
-
-
+                
                 logs.AddStep(current, best, temperature);
+
+                //Additional terminal condition : If Temperature is extremely cold
+                if (temperature < 0.1d)
+                {
+                    Console.WriteLine("Temperature is very low ! Algorithm has been stopped.");
+                    break;
+                }
             }
 
             logs.AddFinalLog();
