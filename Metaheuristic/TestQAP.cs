@@ -40,23 +40,31 @@ namespace Metaheuristic
 
         private static void TestTabou()
         {
-            string problemFilepath = path + "tai80a" + ".dat";
+            string problemFilepath = path + "tai40a" + ".dat";
             QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
 
             //Seed it!
-            RandomSingleton.Instance.Seed = 0;
-            QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+            //RandomSingleton.Instance.Seed = 0;
+            //QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+
+            RandomSingleton.Instance.Seed = 6;
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+
 
             Tabou tabou = new Tabou(qap);
             tabou.Verbose = true;
 
             QuadraticAssignmentSolution best = tabou.Run(
                 initialSol,
-                300,
-                100);
+                80,
+                500);
 
-            Console.WriteLine("Best : " + best.ToString());
-            Console.WriteLine("Fitness : " + best.Fitness);
+            Console.WriteLine(tabou.Logs.FinalLog.ToString());
+
+            Console.WriteLine(tabou.Logs.ToStringImprovements());
+
+            //Console.WriteLine("Best : " + best.ToString());
+            //Console.WriteLine("Fitness : " + best.Fitness);
 
         }
 

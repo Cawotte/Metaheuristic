@@ -6,6 +6,7 @@ namespace Metaheuristic.MethodeTabou
     using System.Text;
     using Metaheuristic.QAP;
     using System.Linq;
+    using Metaheuristic.MethodTabou;
 
     /**
      * Pick des voisins : Seulement prendre les voisins avec des emplacements à une distance X ou moins.
@@ -18,6 +19,10 @@ namespace Metaheuristic.MethodeTabou
         private int sizeTabou = 1;
 
         private QuadratricAssignment problem;
+
+        private TabouLogs logs;
+
+        public TabouLogs Logs { get => logs; }
 
         public Tabou(QuadratricAssignment problem)
         {
@@ -34,10 +39,15 @@ namespace Metaheuristic.MethodeTabou
             forbiddenMoves = new Queue<Tuple<int, int>>();
             this.sizeTabou = sizeTabou;
 
+            logs = new TabouLogs();
+
             QuadraticAssignmentSolution best = initialSol;
             initialSol.Fitness = problem.Evaluate(initialSol);
 
             QuadraticAssignmentSolution current = initialSol;
+
+            //Add step 0
+            logs.AddStep(current, best, forbiddenMoves.Count);
 
             //Stop after X iterations
             for (int i = 0; i < nbSteps; i++)
@@ -79,8 +89,12 @@ namespace Metaheuristic.MethodeTabou
                 }
 
                 current = solution;
+                
+                logs.AddStep(current, best, forbiddenMoves.Count);
 
             }
+
+            logs.AddFinalLog();
 
             return best;
         }
