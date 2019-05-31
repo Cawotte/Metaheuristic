@@ -7,7 +7,7 @@ namespace Metaheuristic.Recuit
     using System.Text;
 
 
-    class RecuitSimule
+    public class RecuitSimule
     {
 
         public bool Verbose = true;

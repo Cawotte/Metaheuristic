@@ -5,7 +5,7 @@ namespace Metaheuristic.Recuit
     using Metaheuristic.GA;
     using System;
 
-    class GeneticAlgorithmRecuit : AbstractGeneticAlgorithm<RecuitSimuleParameters>
+    public class GeneticAlgorithmRecuit : AbstractGeneticAlgorithm<RecuitSimuleParameters>
     {
 
         public RecuitSimule problem;

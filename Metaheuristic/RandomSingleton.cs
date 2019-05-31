@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Metaheuristic
 {
-    class RandomSingleton
+    public class RandomSingleton
     {
         private int seed;
         private Random rand;

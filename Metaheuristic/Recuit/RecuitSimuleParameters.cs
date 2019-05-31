@@ -11,7 +11,7 @@ namespace Metaheuristic.Recuit
     /// <summary>
     /// Encapsuled parameters for the Recuit Simulé algorithm. Useful for Genetic Algorithm.
     /// </summary>
-    class RecuitSimuleParameters : IChromosome
+    public class RecuitSimuleParameters : IChromosome
     {
 
         private Random rand = RandomSingleton.Instance.GetNewSeededRandom();
