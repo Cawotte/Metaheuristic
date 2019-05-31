@@ -147,7 +147,7 @@ namespace Metaheuristic.GA
             {
                 logs.AddFinalLog();
                 if (Verbose)
-                    Console.WriteLine("#Final Log :" + logs.FinalLog.ToStringFinalLog());
+                    Console.WriteLine("#Final Log :" + logs.FinalLog.ToString());
             }
 
             return BestIndividual;

@@ -10,7 +10,7 @@ namespace Metaheuristic.GA
     public class GALogs<T> where T : IChromosome
     {
         private List<LogStep<T>> logs = new List<LogStep<T>>();
-        private LogStep<T> finalLog;
+        private FinalLogStep<T> finalLog;
 
         private static bool ExtendedLog = false; //Only set true for debugging
 
@@ -23,7 +23,7 @@ namespace Metaheuristic.GA
             get => logs[index];
         }
 
-        public LogStep<T> FinalLog
+        public FinalLogStep<T> FinalLog
         {
             get => finalLog;
         }
@@ -80,7 +80,7 @@ namespace Metaheuristic.GA
 
         public void AddFinalLog()
         {
-            LogStep<T> final = new LogStep<T>();
+            FinalLogStep<T> final = new FinalLogStep<T>();
 
             //Best Individual
             final.BestFitness = Last.BestFitness; //logs.Max(step => step.BestFitness);
@@ -90,15 +90,14 @@ namespace Metaheuristic.GA
             final.BestImprovement = GetImprovement(logs[0].BestFitness, Last.BestFitness);
 
             //Average improvement
-            final.Improvement = Math.Round(logs.Average(step => step.Improvement), 4);
+            final.AverageImprovement = Math.Round(logs.Average(step => step.Improvement), 4);
 
             //Average Diversity
-            final.Diversity = Math.Round(logs.Average(step => step.Diversity), 2);
+            final.AverageDiversity = Math.Round(logs.Average(step => step.Diversity), 2);
 
             //Average Fitness
             final.AverageFitness = (int)logs.Average(step => step.AverageFitness);
-
-            final.Step = Size + 1; //Not really useful
+            
 
             //save it
             finalLog = final;
@@ -136,14 +135,26 @@ namespace Metaheuristic.GA
 
                 return str;
             }
+            
+        }
 
-            public string ToStringFinalLog()
+        public struct FinalLogStep<T> where T : IChromosome
+        {
+            public int AverageFitness;
+            public double AverageDiversity;
+            public double AverageImprovement;
+
+            public T Best;
+            public int BestFitness;
+            public double BestImprovement;
+            
+            public override string ToString()
             {
                 string str = "";
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nAverage GA Fitness : " + AverageFitness;
-                str += "\nAverage Diversity : " + Diversity + "%";
-                str += "\nAverage Improvement : " + Improvement + "%";
+                str += "\nAverage Diversity : " + AverageDiversity + "%";
+                str += "\nAverage Improvement : " + AverageImprovement + "%";
                 str += "\nImprovement between initial and best : " + BestImprovement + "%";
                 str += "\n";
 
