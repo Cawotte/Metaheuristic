@@ -18,13 +18,13 @@ namespace Metaheuristic.MethodeTabou
         private Queue<Tuple<int, int>> forbiddenMoves;
         private int sizeTabou = 1;
 
-        private QuadratricAssignment problem;
+        private QuadraticAssignment problem;
 
         private TabouLogs logs;
 
         public TabouLogs Logs { get => logs; }
 
-        public Tabou(QuadratricAssignment problem)
+        public Tabou(QuadraticAssignment problem)
         {
             this.problem = problem;
         }
@@ -118,7 +118,7 @@ namespace Metaheuristic.MethodeTabou
         private QuadraticAssignmentSolution[] GetNeighborhood(QuadraticAssignmentSolution current, out Tuple<int, int>[] inversions)
         {
             //List of possible inversions minus the forbidden transformations
-            inversions = QuadraticAssignmentSolution.GetInversions(problem.N).Except(forbiddenMoves).ToArray();
+            inversions = (problem.Inversions).Except(forbiddenMoves).ToArray();
             return current.GetNeighbors(inversions);
         }
 

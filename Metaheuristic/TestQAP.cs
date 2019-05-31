@@ -21,7 +21,8 @@ namespace Metaheuristic
         {
             //TestTabou();
             //TestRecuitSimuleGA();
-            TestRecuitSimule();
+            //TestRecuitSimule();
+            TestAlgorithmGenetic();
 
             Console.WriteLine("Click on any key to exit.");
             Console.ReadKey();
@@ -42,7 +43,7 @@ namespace Metaheuristic
         private static void TestTabou()
         {
             string problemFilepath = path + "tai40a" + ".dat";
-            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+            QuadraticAssignment qap = new QuadraticAssignment(problemFilepath);
 
             //Seed it!
             //RandomSingleton.Instance.Seed = 0;
@@ -72,12 +73,12 @@ namespace Metaheuristic
         private static void TestRecuitSimuleGA()
         {
             string problemFilepath = path + "tai12a" + ".dat";
-            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+            QuadraticAssignment qap = new QuadraticAssignment(problemFilepath);
 
             //Seed it!
             RandomSingleton.Instance.Seed = 0;
 
-            QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+            QuadraticAssignmentSolution initialSol = qap.Identity;
 
             RecuitSimule recuit = new RecuitSimule(qap);
 
@@ -97,9 +98,9 @@ namespace Metaheuristic
         {
 
             string problemFilepath = path + "tai12a" + ".dat";
-            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+            QuadraticAssignment qap = new QuadraticAssignment(problemFilepath);
 
-            QuadraticAssignmentSolution initialSol = QuadraticAssignmentSolution.GetIdentity(qap.N);
+            QuadraticAssignmentSolution initialSol = qap.Identity;
             QuadraticAssignmentSolution best;
             
             RecuitSimule recuit = new RecuitSimule(qap);
@@ -107,42 +108,19 @@ namespace Metaheuristic
 
             Console.WriteLine(recuit.Logs.FinalLog.ToString());
             Console.WriteLine(recuit.Logs.ToStringImprovements());
-
-            /*
-            recuit = new RecuitSimule(qap, 0.9f, 100, 5);
-            best = recuit.Execute(initialSol, 10000);
             
-            recuit = new RecuitSimule(qap, 0.9f, 100, 5);
-            best = recuit.Execute(initialSol, 1000);
-
-            
-            recuit = new RecuitSimule(qap, 0.95f, 100, 5);
-            best = recuit.Execute(initialSol, 1000);
-
-            recuit = new RecuitSimule(qap, 0.80f, 100, 5);
-            best = recuit.Execute(initialSol, 1000);
-
-
-            recuit = new RecuitSimule(qap, 0.9f, 100, 10);
-            best = recuit.Execute(initialSol, 1000);
-
-            
-            recuit = new RecuitSimule(qap, 0.9f, 100, 20);
-            best = recuit.Execute(initialSol, 1000);*/
-
-
-
         }
+
         private static void TestAlgorithmGenetic()
         {
 
             string problemFilepath = path + "tai12a" + ".dat";
-            QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+            QuadraticAssignment qap = new QuadraticAssignment(problemFilepath);
 
             //Seed it!
             RandomSingleton.Instance.Seed = 0;
 
-            GeneticAlgorithmQAP ga = new GeneticAlgorithmQAP(qap, 100, 50, 0.05d, 2, 10);
+            GeneticAlgorithmQAP ga = new GeneticAlgorithmQAP(qap, 100, 50, 0.05d, 2, 20);
 
             ga.Verbose = true;
             ga.WithLogs = true;
@@ -151,18 +129,7 @@ namespace Metaheuristic
             Console.WriteLine("Best Solution : " + best.ToString());
             Console.WriteLine("Fitness : " + best.Fitness);
         }
-        private static void TestRandomInversions()
-        {
-            int n = 4;
-            int[] inversion = new int[2];
-            int count = 10;
 
-            for (int i = 0; i < count; i++)
-            {
-                inversion = QuadraticAssignmentSolution.GetRandomInversion(n);
-                Console.WriteLine(String.Format("({0},{1})", inversion[0], inversion[1]));
-            }
-        }
         private static void TestSolutionsValidity() {
 
             //We pair the tests to their expected results.
@@ -215,7 +182,7 @@ namespace Metaheuristic
                 string problemFilepath = path + fname + ".dat";
                 string solutionFilepath = path + fname + ".sln";
                 
-                QuadratricAssignment qap = new QuadratricAssignment(problemFilepath);
+                QuadraticAssignment qap = new QuadraticAssignment(problemFilepath);
                 QuadraticAssignmentSolution solution = new QuadraticAssignmentSolution(solutionFilepath, false);
 
                 int evaluation = qap.Evaluate(solution);
@@ -279,7 +246,7 @@ namespace Metaheuristic
 
 
 
-            QuadratricAssignment qap = new QuadratricAssignment(3, weights, distances);
+            QuadraticAssignment qap = new QuadraticAssignment(3, weights, distances);
             
             
             List<int[]> solutions = new List<int[]>();
@@ -296,7 +263,7 @@ namespace Metaheuristic
 
         private static void TestQAPFileReading()
         {
-            QuadratricAssignment qapf = new QuadratricAssignment(path + filename);
+            QuadraticAssignment qapf = new QuadraticAssignment(path + filename);
             Console.WriteLine(qapf.ToString());
 
             QuadraticAssignmentSolution sol = new QuadraticAssignmentSolution("8 1 6 2 11 10 3 5 9 7 12 4");

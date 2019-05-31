@@ -14,11 +14,11 @@ namespace Metaheuristic.GA
 
         //Parameters
         private int n;
-        private QuadratricAssignment problem;
+        private QuadraticAssignment problem;
 
         #endregion
 
-        public GeneticAlgorithmQAP(QuadratricAssignment problem,
+        public GeneticAlgorithmQAP(QuadraticAssignment problem,
                                     int populationSize,
                                     int maxSteps,
                                     double mutationChance,
@@ -39,15 +39,67 @@ namespace Metaheuristic.GA
         {
 
             QuadraticAssignmentSolution[] childs = new QuadraticAssignmentSolution[2];
-            int power = rand.Next(5);
 
-            childs[0] = QuadraticAssignmentSolution.Power(parent1, parent2, power);
+            //Crossover, 
+            //we randomly shuffle both parents, then we get take care of contradictions
 
-            power = rand.Next(5);
-            childs[1] = QuadraticAssignmentSolution.Power(parent2, parent1, power);
+            //They are each a copy of a parent
+            childs[0] = parent1.Clone();
+            childs[1] = parent2.Clone();
 
-            //childs[0] = parent1 * parent2;
-            //childs[1] = parent2 * parent1;
+            for (int i = 0; i < n; i++)
+            {
+                int flip = rand.Next(2);
+
+                //We randomly swap the gene of each child
+                if (flip == 1)
+                {
+                    childs[0].Solution[i] = parent2.Solution[i];
+                    childs[1].Solution[i] = parent1.Solution[i];
+                }
+            }
+
+            //For each child, we fix the contradictions that makes it not a permutation.
+            for (int i = 0; i < childs.Length; i++)
+            {
+                int[] permutation = childs[i].Solution;
+
+                //List to keep track of the unpicked values.
+                HashSet<int> possibleValues = problem.Identity.Solution.ToHashSet();
+                //List to keep track of the blocking indexes.
+                HashSet<int> blockingIndexes = new HashSet<int>();
+
+                //Find mistakes
+                for (int j = 0; j < n; j++)
+                {
+                    bool isRemoved = possibleValues.Remove(permutation[j]);
+
+                    //If we weren't able to remove it, it means it was at least a second occurence,
+                    //so a problematic index
+                    if (!isRemoved)
+                    {
+                        blockingIndexes.Add(j);
+                    }
+
+                }
+
+                //Fix them, for each problematic indexes, pick a random unpicked value.
+                foreach (int index in blockingIndexes) {
+
+                    //Random index to pick in possible values
+                    int indexRand = rand.Next(possibleValues.Count);
+
+                    //Put that value in a problematic index in the permutation
+                    permutation[index] = possibleValues.ElementAt(indexRand);
+
+                    //Remove that value from the possible values
+                    possibleValues.Remove(permutation[index]);
+
+                }
+
+            }
+            
+
 
             return childs;
         }
@@ -59,7 +111,7 @@ namespace Metaheuristic.GA
 
         protected override QuadraticAssignmentSolution Mutate(QuadraticAssignmentSolution child)
         {
-            return child.ApplyInversion(QuadraticAssignmentSolution.GetRandomInversion(n));
+            return child.ApplyInversion(problem.GetRandomInversion());
         }
     }
 }

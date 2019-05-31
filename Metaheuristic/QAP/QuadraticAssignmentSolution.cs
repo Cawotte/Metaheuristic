@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,12 +10,6 @@ namespace Metaheuristic.QAP
 {
     public class QuadraticAssignmentSolution : IChromosome
     {
-        //Store the Identity Permutation fo size N (Dynamic Programming)
-        private static Dictionary<int, QuadraticAssignmentSolution> identities = new Dictionary<int, QuadraticAssignmentSolution>();
-
-        //Store all inversions possibles for a n-sized solutions.
-        private static Dictionary<int, List<Tuple<int, int>>> inversions = new Dictionary<int, List<Tuple<int, int>>>();
-
         #region Members
         private readonly int n;
 
@@ -124,7 +119,7 @@ namespace Metaheuristic.QAP
             }
 
             //Shuffle it.
-            Shuffle(solution);
+            ShuffleSolution();
 
 
         }
@@ -193,26 +188,17 @@ namespace Metaheuristic.QAP
 
 
         /// <summary>
-        /// 
+        /// Apply an inversion on that solution. (It modify the current one!)
         /// </summary>
         /// <param name="inversion"></param>
         /// <returns>Self with the inversion</returns>
-        public QuadraticAssignmentSolution ApplyInversion(int[] inversion)
+        public QuadraticAssignmentSolution ApplyInversion(Tuple<int, int> inversion)
         {
-            if (inversion.Length != 2)
-            {
-                throw new InvalidQAPException("Inversion needs to be an array of 2 int !");
-            }
-            if (inversion[0] >= n || inversion[1] >= n)
-            {
-                throw new InvalidQAPException("Outs of bounds inversion values !");
-            }
-
             //Swap the values in the inversion indexes.
 
-            int temp = solution[inversion[0]];
-            solution[inversion[0]] = solution[inversion[1]];
-            solution[inversion[1]] = temp;
+            int temp = solution[inversion.Item1];
+            solution[inversion.Item1] = solution[inversion.Item2];
+            solution[inversion.Item2] = temp;
 
             //To chain call
             return this;
@@ -268,11 +254,9 @@ namespace Metaheuristic.QAP
 
         public Tuple<int, int> GetRandomInversion()
         {
-            
-            Tuple<int, int>[] inversions = QuadraticAssignmentSolution.GetInversions(n);
-
-            return inversions[rand.Next(0, inversions.Length)];
+            return QuadraticAssignment.GetRandomInversion(n);
         }
+
         #endregion
 
         #region Private Methods
@@ -370,95 +354,12 @@ namespace Metaheuristic.QAP
             return IsValid(Utils.ParseStringToIntArray(solution));
         }
 
-        public void Shuffle<T>(T[] array)
-        {
-            //Quick and poor shuffler, it can be faster + should be able to use a seed.
-            ///TODO : Rework shuffler into something better
+        public void ShuffleSolution() {
 
-            //Randomly swap spots.
-            for (int i = 0; i < array.Length - 1; i++)
+            for (int i = 0; i < n; i++)
             {
-                int j = rand.Next(i, array.Length);
-                T temp = array[i];
-                array[i] = array[j];
-                array[j] = temp;
+                ApplyInversion(GetRandomInversion());
             }
-        }
-
-        public static QuadraticAssignmentSolution GetIdentity(int n)
-        {
-            if (identities.ContainsKey(n))
-            {
-                return identities[n].Clone();
-            }
-            else
-            {
-                //Create Identity
-                int[] solution = new int[n];
-
-                //Fill the array with numbers from 1 to N.
-                for (int i = 0; i < n; i++)
-                {
-                    solution[i] = i + 1;
-                }
-
-                identities.Add(n, new QuadraticAssignmentSolution(solution));
-
-                return identities[n].Clone();
-            }
-        }
-
-        public static Tuple<int,int>[] GetInversions(int n)
-        {
-            if (inversions.ContainsKey(n))
-            {
-                return inversions[n].ToArray();
-            }
-            else
-            {
-                List<Tuple<int, int>> allInversions = new List<Tuple<int, int>>();
-                for (int i = 0; i < n; i++)
-                {
-                    for (int j = i + 1; j < n; j++)
-                    {
-                        allInversions.Add(new Tuple<int, int>(i, j));
-                    }
-                }
-
-                //Save it
-                inversions.Add(n, allInversions);
-
-                return inversions[n].ToArray();
-            }
-        }
-
-        public static int[] GetRandomInversion(int sizeN)
-        {
-            //Values goes from 0 to n-1 !!
-            //Certified no self-permutations
-            //To optimize?
-
-            List<int> marbleBag = new List<int>();
-            for (int i = 0; i < sizeN; i++)
-            {
-                marbleBag.Add(i);
-            }
-
-            //Pick two random
-            Random rnd = RandomSingleton.Instance.Rand;
-            int[] inversion = new int[2];
-
-
-            //Pick 1
-            inversion[0] = marbleBag[rnd.Next(0, sizeN)];
-
-            //Remove it from list
-            marbleBag.Remove(inversion[0]);
-
-            //Pick 2
-            inversion[1] = marbleBag[rnd.Next(0, sizeN - 1)];
-
-            return inversion;
         }
         
         #endregion

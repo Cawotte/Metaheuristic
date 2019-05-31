@@ -9,8 +9,14 @@ namespace Metaheuristic.QAP
     using System.IO;
     using System.Text.RegularExpressions;
 
-    public class QuadratricAssignment
+    public class QuadraticAssignment
     {
+        //Statics
+        //Store the Identity Permutation fo size N (Dynamic Programming)
+        private static Dictionary<int, QuadraticAssignmentSolution> identities = new Dictionary<int, QuadraticAssignmentSolution>();
+
+        //Store all inversions possibles for a n-sized solutions.
+        private static Dictionary<int, List<Tuple<int, int>>> inversions = new Dictionary<int, List<Tuple<int, int>>>();
 
         /**
          * 
@@ -30,7 +36,29 @@ namespace Metaheuristic.QAP
         public int[,] Weights { get => weights; }
         public int[,] Distances { get => distances; }
 
-        public QuadratricAssignment(int n, int[,] weights, int[,] distances)
+        /// <summary>
+        /// The Identity permutation of size N.
+        /// </summary>
+        public QuadraticAssignmentSolution Identity
+        {
+            get => GetIdentity(n);
+        }
+
+        /// <summary>
+        /// All the possible inversions for a permutation of size N.
+        /// </summary>
+        public Tuple<int, int>[] Inversions
+        {
+            get => GetInversions(n);
+        }
+
+        /// <summary>
+        /// Create a QAP from given parameters
+        /// </summary>
+        /// <param name="n"></param>
+        /// <param name="weights"></param>
+        /// <param name="distances"></param>
+        public QuadraticAssignment(int n, int[,] weights, int[,] distances)
         {
             this.n = n;
 
@@ -44,7 +72,11 @@ namespace Metaheuristic.QAP
             this.distances = distances;
         }
 
-        public QuadratricAssignment(string filepath)
+        /// <summary>
+        /// Read a QAP from a file
+        /// </summary>
+        /// <param name="filepath"></param>
+        public QuadraticAssignment(string filepath)
         {
             if (!File.Exists(filepath))
             {
@@ -69,6 +101,12 @@ namespace Metaheuristic.QAP
         }
 
         #region Public Methods
+
+        /// <summary>
+        /// Calculate the fitness of that solution for this QAP.
+        /// </summary>
+        /// <param name="solution"></param>
+        /// <returns></returns>
         public int Evaluate(int[] solution)
         {
             if (solution.Length != n)
@@ -91,6 +129,11 @@ namespace Metaheuristic.QAP
             return sum;
         }
 
+        /// <summary>
+        /// Calculate the fitness of that solution for this QAP.
+        /// </summary>
+        /// <param name="solution"></param>
+        /// <returns></returns>
         public int Evaluate(QuadraticAssignmentSolution solution)
         {
             if (solution.N != n)
@@ -127,6 +170,12 @@ namespace Metaheuristic.QAP
                 solutions[i].Fitness = Evaluate(solutions[i]);
             }
         }
+
+        public Tuple<int, int> GetRandomInversion()
+        {
+            return GetRandomInversion(n);
+        }
+
         public override string ToString()
         {
             string str = "";
@@ -135,6 +184,80 @@ namespace Metaheuristic.QAP
             str += Utils.String2DArray(distances) + "\n";
 
             return str;
+        }
+        #endregion
+
+        #region Static Methods
+
+        /// <summary>
+        /// Return an Identity permutation of size N.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static QuadraticAssignmentSolution GetIdentity(int n)
+        {
+            if (identities.ContainsKey(n))
+            {
+                return identities[n].Clone();
+            }
+            else
+            {
+                //Create Identity
+                int[] solution = new int[n];
+
+                //Fill the array with numbers from 1 to N.
+                for (int i = 0; i < n; i++)
+                {
+                    solution[i] = i + 1;
+                }
+
+                identities.Add(n, new QuadraticAssignmentSolution(solution));
+
+                return identities[n].Clone();
+            }
+        }
+
+        /// <summary>
+        /// Return all possible inversions for a permutation of size N.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static Tuple<int, int>[] GetInversions(int n)
+        {
+            if (inversions.ContainsKey(n))
+            {
+                return inversions[n].ToArray();
+            }
+            else
+            {
+                List<Tuple<int, int>> allInversions = new List<Tuple<int, int>>();
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = i + 1; j < n; j++)
+                    {
+                        allInversions.Add(new Tuple<int, int>(i, j));
+                    }
+                }
+
+                //Save it
+                inversions.Add(n, allInversions);
+
+                return inversions[n].ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Return a random permutation for a permutation of size N
+        /// </summary>
+        /// <param name="sizeN"></param>
+        /// <returns></returns>
+        public static Tuple<int, int> GetRandomInversion(int n)
+        {
+            Tuple<int, int>[] inversions = GetInversions(n);
+
+            Random rand = RandomSingleton.Instance.Rand;
+
+            return inversions[rand.Next(0, inversions.Length)];
         }
         #endregion
 

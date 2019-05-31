@@ -11,7 +11,7 @@ namespace Metaheuristic.Recuit
     {
 
         public bool Verbose = true;
-        private QuadratricAssignment qap;
+        private QuadraticAssignment qap;
         
         private Random rnd = RandomSingleton.Instance.GetNewSeededRandom();
 
@@ -23,7 +23,7 @@ namespace Metaheuristic.Recuit
         }
         public RecuitLogs Logs { get => logs; }
 
-        public RecuitSimule(QuadratricAssignment problem)
+        public RecuitSimule(QuadraticAssignment problem)
         {
             this.qap = problem;
         }

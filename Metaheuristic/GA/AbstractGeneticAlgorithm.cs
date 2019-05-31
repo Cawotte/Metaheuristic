@@ -194,15 +194,17 @@ namespace Metaheuristic.GA
             //If it's the first gen, we compute all Fitness. Else we skip the elites ones we already know.
             int startIndex = isFirstGen ? 0 : elitism;
 
+            int sumFitnesses = 0;
             for (int i = startIndex; i < populationSize; i++)
             {
                 population[i].Fitness = GetFitness(population[i]);
+                sumFitnesses += population[i].Fitness;
             }
 
             //Sort by Score (Thanks LINQ)
             population = population.OrderBy(individual => individual.Fitness).ToArray();
 
-            sumFitnesses = population.Sum(individual => individual.Fitness);
+            //sumFitnesses = population.Sum(individual => individual.Fitness);
             //Make it return best score?
 
             trackBests.Add(BestIndividual);
@@ -227,26 +229,9 @@ namespace Metaheuristic.GA
         {
 
             /// TODO : Have different population selection algorithms possible.
-            /// 
-
-            T[] parents = new T[2];
-
-            //Roulette Wheel Selection
             
-            for (int i = 0; i < 2; i++)
-            {
-                int partialSumFitnesses = 0;
-                //Spin the wheel
-                int randValue = rand.Next(0, sumFitnesses);
-
-                //Search the parent on the "wheel"
-                int index = 0;
-                while (partialSumFitnesses < sumFitnesses) {
-                    partialSumFitnesses += population[index++].Fitness;
-                }
-
-                parents[i] = population[index-1]; // -1 to cancel the previous last increment from the loop
-            }
+            T[] parents = KTournamentSelection(4);
+            
 
             return parents;
         }
@@ -261,6 +246,35 @@ namespace Metaheuristic.GA
             }
 
             return child;
+        }
+
+        protected T GetRandomInvidivualFromPopulation() {
+            return population[rand.Next(0, population.Length)];
+        }
+
+        private T[] KTournamentSelection(int K)
+        {
+
+            T[] parents = new T[2];
+
+            for (int i = 0; i < parents.Length; i++)
+            {
+
+                //We pick K individuals at random
+                List<T> challengers = new List<T>();
+                for (int j = 0; j < K; j++)
+                {
+                    challengers.Add(GetRandomInvidivualFromPopulation());
+                }
+
+                //find minFitness
+                int minFitness = challengers.Min(individual => individual.Fitness);
+
+                //We keep the one with the best fitness.
+                parents[i] = challengers.First(individual => individual.Fitness == minFitness);
+            }
+
+            return parents;
         }
 
 
