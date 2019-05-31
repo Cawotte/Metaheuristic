@@ -32,10 +32,8 @@ namespace Metaheuristic.GA
         //Calculations
         protected T[] population;
         protected int sumFitnesses;
-
-        //Other
-        protected List<T> trackBests = new List<T>();
-        protected GALogs<T> logs;
+        
+        private GALogs<T> logs;
 
         #endregion
 
@@ -44,6 +42,7 @@ namespace Metaheuristic.GA
         {
             get => population[0];
         }
+        public GALogs<T> Logs { get => logs; }
         #endregion
 
         protected AbstractGeneticAlgorithm(
@@ -68,7 +67,6 @@ namespace Metaheuristic.GA
 
         public T Run()
         {
-            trackBests = new List<T>();
 
             if (Verbose)
             {
@@ -206,8 +204,7 @@ namespace Metaheuristic.GA
 
             //sumFitnesses = population.Sum(individual => individual.Fitness);
             //Make it return best score?
-
-            trackBests.Add(BestIndividual);
+            
 
             if (Verbose)
             {
@@ -276,38 +273,6 @@ namespace Metaheuristic.GA
 
             return parents;
         }
-
-
-        #region Print Info
-        protected void PrintTopFitnesses(int top)
-        {
-            Console.WriteLine("--- FITNESSES");
-            int lenght = Math.Min(top, populationSize);
-            for (int i = 0; i < lenght; i++)
-            {
-                Console.WriteLine("#" + (i + 1) + " : " + population[i].Fitness);
-            }
-            Console.WriteLine("----");
-        }
-        protected void PrintFitnesses()
-        {
-            Console.WriteLine("--- FITNESSES");
-            for (int i = 0; i < populationSize; i++)
-            {
-                Console.WriteLine("#" + (i + 1) + " : " + population[i].Fitness);
-            }
-            Console.WriteLine("----");
-        }
-
-        protected void PrintBestHistory()
-        {
-            Console.WriteLine("--- BEST");
-            foreach (T best in trackBests)
-            {
-                Console.WriteLine(best.ToString() + " : " + best.Fitness);
-            }
-            Console.WriteLine("----");
-        }
-        #endregion
+        
     }
 }

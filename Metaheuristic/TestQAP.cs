@@ -15,6 +15,7 @@ namespace Metaheuristic
     public class TestQAP
     {
         static String path = @"DataTaillard\";
+        static String pathCSV = @"CSV\";
         static String filename = "tai12a.dat";
 
         static void Main(string[] args)
@@ -125,6 +126,9 @@ namespace Metaheuristic
             ga.Verbose = true;
             ga.WithLogs = true;
             QuadraticAssignmentSolution best = ga.Run();
+
+            string pathWrite = Path.Combine(pathCSV, "tai12a", "ga.csv");
+            ga.Logs.WriteTo(pathWrite);
 
             Console.WriteLine("Best Solution : " + best.ToString());
             Console.WriteLine("Fitness : " + best.Fitness);

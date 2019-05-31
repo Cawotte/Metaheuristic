@@ -7,6 +7,10 @@ namespace Metaheuristic.GA
     using System.Text;
     using System.Linq;
 
+    using CsvHelper;
+    using CsvHelper.Configuration.Attributes;
+    using System.IO;
+
     public class GALogs<T> where T : IChromosome
     {
         private List<LogStep<T>> logs = new List<LogStep<T>>();
@@ -56,6 +60,7 @@ namespace Metaheuristic.GA
 
             step.Best = population[0];
             step.BestFitness = population[0].Fitness;
+            step.BestString = population[0].ToString();
 
             //Improvement
             //If it's the first step, we init it.
@@ -103,7 +108,15 @@ namespace Metaheuristic.GA
             finalLog = final;
 
         }
-        
+
+        public void WriteTo(string path)
+        {
+            using (var writer = new StreamWriter("test2.csv"))
+            using (var csv = new CsvWriter(writer))
+            {
+                csv.WriteRecords(logs);
+            }
+        }
 
         private double GetImprovement(int lastFitness, int newFitness) {
             return Math.Round( (1d - (double)newFitness / (double)lastFitness) * 100, 4);
@@ -111,14 +124,25 @@ namespace Metaheuristic.GA
 
         public struct LogStep<T> where T : IChromosome
         {
-            public int Step;
-            public int AverageFitness;
-            public double Diversity;
-            public double Improvement;
+            [Name("Step")]
+            public int Step { get; set; }
 
+            [Name("Average Fitness")]
+            public int AverageFitness { get; set; }
+            [Name("Diversity")]
+            public double Diversity { get; set; }
+            [Name("Improvement")]
+            public double Improvement { get; set; }
+            
             public T Best;
-            public int BestFitness;
-            public double BestImprovement;
+
+            [Ignore]//e[Name("Best")]
+            public String BestString { get; set; }
+
+            [Name("Best Fitness")]
+            public int BestFitness { get; set; }
+            [Name("Best Improvement")]
+            public double BestImprovement { get; set; }
 
             //Used for debugging
             public T[] Population;
