@@ -29,6 +29,14 @@ namespace Metaheuristic.MethodeTabou
             this.problem = problem;
         }
 
+
+        public QuadraticAssignmentSolution Run(TabouParameters param)
+        {
+            return Run(param.InitialSol,
+                       param.SizeTabou,
+                       param.NbSteps);
+        }
+
         public QuadraticAssignmentSolution Run(
             QuadraticAssignmentSolution initialSol,
             int sizeTabou,

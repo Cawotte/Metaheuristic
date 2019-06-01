@@ -7,6 +7,9 @@ namespace Metaheuristic.MethodTabou
     using System.Text;
     using System.Linq;
     using Metaheuristic.QAP;
+    using System.IO;
+    using CsvHelper;
+    using CsvHelper.Configuration.Attributes;
 
     public class TabouLogs
     {
@@ -41,9 +44,11 @@ namespace Metaheuristic.MethodTabou
 
             step.Current = current;
             step.CurrentFitness = current.Fitness;
+            step.CurrentString = current.ToString();
 
             step.Best = best;
             step.BestFitness = best.Fitness;
+            step.BestString = best.ToString();
 
             step.CurrentTabouSize = currentTabouSize;
 
@@ -129,25 +134,51 @@ namespace Metaheuristic.MethodTabou
             return Math.Round((1d - (double)newFitness / (double)lastFitness) * 100, 4);
         }
 
+        public void SaveLogsTo(string path)
+        {
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer))
+            {
+                csv.WriteRecords(logs);
+            }
+        }
+
         public struct LogTabou
         {
-            public int Step;
+            [Name("Step")]
+            public int Step { get; set; }
 
-            public bool HasImproved;
+            [Name("Has Improved")]
+            public bool HasImproved { get; set; }
 
             //current sol
             public QuadraticAssignmentSolution Current;
-            public int CurrentFitness;
-            public double CurrentImprovement;
+
+            
+            [Name("Current solution")]
+            public string CurrentString { get; set; }
+
+            [Name("Current fitness")]
+            public int CurrentFitness { get; set; }
+
+            [Name("Current improvement")]
+            public double CurrentImprovement { get; set; }
 
             //best known sol
             public QuadraticAssignmentSolution Best;
-            public int BestFitness;
-            public double BestImprovement;
+
+            [Name("Best Solution")]
+            public string BestString { get; set; }
+
+            [Name("Best Fitness")]
+            public int BestFitness { get; set; }
+
+            [Name("Best Improvement")]
+            public double BestImprovement { get; set; }
 
             //Forbidden list
-            public int CurrentTabouSize;
-        
+            [Name("Current Tabou Size")]
+            public int CurrentTabouSize { get; set; }
 
             public override string ToString()
             {

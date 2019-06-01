@@ -27,7 +27,7 @@ namespace Metaheuristic.Recuit
         {
             this.qap = problem;
         }
-   
+
         public QuadraticAssignmentSolution Execute(QuadraticAssignmentSolution initialSol, 
                                                     double initialTemp, 
                                                     double temperatureDecrease, 

@@ -16,6 +16,7 @@ namespace Metaheuristic
     using Metaheuristic.MethodeTabou;
     using System.Text.RegularExpressions;
     using System.Reflection;
+    using Metaheuristic.MethodTabou;
 
     class MainMeta
     {
@@ -101,8 +102,15 @@ namespace Metaheuristic
 
                         break;
                     case "r":
-                    case "run":
+                    case "rec":
+                    case "recuit":
+                        algo = Algo.Recuit;
                         RunRecuit();
+                        break;
+                    case "tab":
+                    case "tabou":
+                        algo = Algo.Tabou;
+                        RunTabou();
                         break;
 
                     case "test":
@@ -154,14 +162,10 @@ namespace Metaheuristic
             }
 
         }
-
-        private static bool RunAlgo()
-        {
-            return true;
-        }
-
+        
         private static bool RunRecuit()
         {
+            algo = Algo.Recuit;
             QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
             double initialTemp = -1d;
             double temperatureDecrease = -1d;
@@ -235,6 +239,83 @@ namespace Metaheuristic
             recuit.Logs.SaveLogsTo(GetCSVPath());
             Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
 
+            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
+            Console.ReadKey();
+            Console.WriteLine();
+
+
+            return true;
+        }
+
+        private static bool RunTabou()
+        {
+
+            algo = Algo.Tabou;
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+            int sizeTabou = -1;
+            int steps = -1;
+            TabouParameters param;
+
+            Console.WriteLine("Veuillez entrez les paramètres du Tabou : ");
+
+
+            Console.WriteLine("Taille de la liste Tabou (>= 0) :");
+            if (!GetCorrectInt(out sizeTabou, (val) => val >= 0))
+            {
+                return false;
+            }
+
+            Console.WriteLine("Nombre d'étapes de l'exécution ( > 0) : ");
+            if (!GetCorrectInt(out steps, (val) => val > 0))
+            {
+                return false;
+            }
+
+
+            param = new TabouParameters(initialSol, sizeTabou, steps);
+
+            //param = new RecuitSimuleParameters(qap.N);
+            Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
+            Console.WriteLine(param.ToString());
+
+            string str = "";
+            if (!GetCorrectString(out str, (s) => IsValidation(s)))
+            {
+                return false;
+            }
+
+            if (!IsYes(str))
+            {
+                return false;
+            }
+
+            //Lancer l'exécution
+            Tabou tabou = new Tabou(qap);
+
+            tabou.Verbose = true;
+
+            bestFitness = tabou.Run(param).Fitness;
+
+            Console.WriteLine("Paramètres :");
+            Console.WriteLine(param.ToString());
+
+            Console.WriteLine("Résultats :");
+            Console.WriteLine(tabou.Logs.FinalLog.ToString());
+
+            paramString = param.ToString();
+            resultString = tabou.Logs.FinalLog.ToString();
+
+            //Save Results
+            SaveResults();
+            Console.WriteLine("Résultats sauvegardées dans " + GetResultPath() + "!");
+
+            //Save Logs
+            tabou.Logs.SaveLogsTo(GetCSVPath());
+            Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
+
+            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
+            Console.ReadKey();
+            Console.WriteLine();
 
             return true;
         }
@@ -412,13 +493,19 @@ namespace Metaheuristic
 
         private static string WelcomeMessage()
         {
-            return "\nBienvenue dans le solveur de QAP !\n" +
-                "\tChangez d'algorithme en tapant 'Recuit', 'Tabou', 'GA' ou 'RecuitGA'\n" +
-                "\tEntrez 's' ou 'seed' pour changer de seed (seed actuel : " + seed + " )\n" +
-                "\tEntrez 'q' ou 'quit' pour quitter\n" +
-                "\tEntrez 'x' ou 'e' ou 'exit' pour retourner au menu n'importe quand\n" +
-                "\tEntrez 'r' ou 'run' pour commencer à entrer des paramètres et lancer un algorithme.\n" +
-                "\tEntrez 't' ou 'tai' pour changer d'instance de taillard à utiliser (actuel : " + filename + ")\n";
+            string str = "";
+            str += "\nBienvenue dans le solveur de QAP !\n";
+            str += "\tEntrez 't' ou 'tai' pour changer d'instance de taillard à utiliser (actuel : " + filename + ")\n";
+            str += "\tEntrez 's' ou 'seed' pour changer de seed (seed actuel : " + seed + " )\n\n";
+
+            str += "\tEntrez 'r' ou 'rec' ou 'recuit' pour lancer un Recuit Simulé\n";
+            str += "\tEntrez 'tab' ou 'tabou' pour lancer une Méthode Tabou\n";
+
+            str += "\n\tEntrez 'x' ou 'e' ou 'exit' pour retourner au menu n'importe quand\n";
+            str += "\tEntrez 'q' ou 'quit' pour quitter\n";
+
+            return str;
+                
         }
 
         private static string GetInstanceInfo()
