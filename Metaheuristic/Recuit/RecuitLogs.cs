@@ -5,6 +5,9 @@ namespace Metaheuristic.Recuit
     using System.Collections.Generic;
     using System.Text;
     using Metaheuristic.QAP;
+    using CsvHelper;
+    using CsvHelper.Configuration.Attributes;
+    using System.IO;
 
     public class RecuitLogs
     {
@@ -39,9 +42,11 @@ namespace Metaheuristic.Recuit
 
             step.Current = current;
             step.CurrentFitness = current.Fitness;
+            step.CurrentString = current.ToString();
 
             step.Best = best;
             step.BestFitness = best.Fitness;
+            step.BestString = best.ToString();
 
             step.CurrentTemp = currentTemp;
 
@@ -126,6 +131,14 @@ namespace Metaheuristic.Recuit
             return str;
         }
 
+        public void SaveLogsTo(string path)
+        {
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer))
+            {
+                csv.WriteRecords(logs);
+            }
+        }
 
         private double GetImprovement(int lastFitness, int newFitness)
         {
@@ -134,22 +147,40 @@ namespace Metaheuristic.Recuit
 
         public struct LogRecuit
         {
-            public int Step;
+            [Name("Step")]
+            public int Step { get; set; }
 
-            public int HasImproved;
+            [Name("Has Improved")]
+            public int HasImproved { get; set; }
 
             //current sol
             public QuadraticAssignmentSolution Current;
-            public int CurrentFitness;
-            public double CurrentImprovement;
+
+
+            //current sol
+            [Name("Current solution")]
+            public string CurrentString;
+
+            [Name("Current fitness")]
+            public int CurrentFitness { get; set; }
+
+            [Name("Current improvement")]
+            public double CurrentImprovement { get; set; }
 
             //best known sol
             public QuadraticAssignmentSolution Best;
-            public int BestFitness;
-            public double BestImprovement;
 
-            //Forbidden list
-            public double CurrentTemp;
+            [Name("Best Solution")]
+            public string BestString { get; set; }
+
+            [Name("Best Fitness")]
+            public int BestFitness { get; set; }
+
+            [Name("Best Improvement")]
+            public double BestImprovement { get; set; }
+
+            [Name("Current Temperature")]
+            public double CurrentTemp { get; set; }
 
 
             public override string ToString()
@@ -177,6 +208,7 @@ namespace Metaheuristic.Recuit
         {
             //Best found and improvements
             public QuadraticAssignmentSolution Best;
+
             public int BestFitness;
             public double BestImprovement;
 

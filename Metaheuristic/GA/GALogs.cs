@@ -136,7 +136,7 @@ namespace Metaheuristic.GA
             
             public T Best;
 
-            [Ignore]//e[Name("Best")]
+            [Name("Best")]
             public String BestString { get; set; }
 
             [Name("Best Fitness")]

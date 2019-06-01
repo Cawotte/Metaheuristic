@@ -18,7 +18,7 @@ namespace Metaheuristic
         static String pathCSV = @"CSV\";
         static String filename = "tai12a.dat";
 
-        static void Main(string[] args)
+        static void Main2(string[] args)
         {
             //TestTabou();
             //TestRecuitSimuleGA();
