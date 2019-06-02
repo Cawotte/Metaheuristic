@@ -54,7 +54,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
 
 
-            Tabou tabou = new Tabou(qap);
+            AbstactGeneticAlgorithm tabou = new AbstactGeneticAlgorithm(qap);
             tabou.Verbose = true;
 
             QuadraticAssignmentSolution best = tabou.Run(
@@ -128,7 +128,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution best = ga.Run();
 
             string pathWrite = Path.Combine(pathCSV, "tai12a", "ga.csv");
-            ga.Logs.WriteTo(pathWrite);
+            ga.Logs.SaveLogsTo(pathWrite);
 
             Console.WriteLine("Best Solution : " + best.ToString());
             Console.WriteLine("Fitness : " + best.Fitness);

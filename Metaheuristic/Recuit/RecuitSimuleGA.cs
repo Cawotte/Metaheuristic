@@ -10,6 +10,11 @@ namespace Metaheuristic.Recuit
 
         public RecuitSimule problem;
 
+        public GeneticAlgorithmRecuit(RecuitSimule problem)
+        {
+            this.problem = problem;
+        }
+
         public GeneticAlgorithmRecuit(RecuitSimule problem,
                                     int populationSize,
                                     int maxSteps,

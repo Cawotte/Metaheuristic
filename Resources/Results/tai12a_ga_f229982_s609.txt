@@ -1,0 +1,17 @@
+Algorithme Génétique
+Parametres :
+
+ Population Size : 100
+ Number of Generations : 50
+ Mutation Chance : 0,005
+ Elitism : 2
+ New Blood : 10
+
+
+Resultats:
+
+Best Fitness : 229982
+Average GA Fitness : 248951
+Average Diversity : 26,88%
+Average Improvement : 0,5267%
+Improvement between initial and best : 15,4975%

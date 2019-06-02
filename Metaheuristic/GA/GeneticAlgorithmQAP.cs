@@ -30,6 +30,12 @@ namespace Metaheuristic.GA
             this.n = problem.N;
         }
 
+        public GeneticAlgorithmQAP(QuadraticAssignment problem)
+        {
+            this.problem = problem;
+            this.n = problem.N;
+        }
+
         protected override int GetFitness(QuadraticAssignmentSolution solution)
         {
             return problem.Evaluate(solution);

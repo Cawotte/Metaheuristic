@@ -113,6 +113,27 @@ namespace Metaheuristic
                         RunTabou();
                         break;
 
+                    case "ga":
+                    case "genetic":
+                        algo = Algo.GA;
+                        GeneticAlgorithmQAP ga = new GeneticAlgorithmQAP(qap);
+
+                        Console.WriteLine("Vous avez sélectionné l'Algorithme Génétique !");
+                        RunGeneticAlgorithm(ga);
+                        break;
+
+                    case "recga":
+                    case "recuitga":
+                    case "garecuit":
+                    case "garec":
+                        algo = Algo.RecuitGA;
+                        GeneticAlgorithmRecuit garec = new GeneticAlgorithmRecuit(new RecuitSimule(qap));
+
+                        Console.WriteLine("Vous avez sélectionné l'Algorithme Génétique pour RECUIT SIMULE !");
+                        
+                        RunGeneticAlgorithm(garec);
+                        break;
+
                     case "test":
                         string csv = GetNameCSV();
                         string txt = GetNameTxt();
@@ -290,7 +311,7 @@ namespace Metaheuristic
             }
 
             //Lancer l'exécution
-            Tabou tabou = new Tabou(qap);
+            AbstactGeneticAlgorithm tabou = new AbstactGeneticAlgorithm(qap);
 
             tabou.Verbose = true;
 
@@ -320,7 +341,98 @@ namespace Metaheuristic
             return true;
         }
 
+        private static bool RunGeneticAlgorithm<T>(AbstractGeneticAlgorithm<T> algo) where T : IChromosome {
+            
 
+            int populationSize = -1;
+            int steps = -1;
+            double mutationChance = 0.05;
+            int elitism = -1;
+            int newBlood = -1;
+
+
+            Console.WriteLine("Veuillez entrez les paramètres de l'Algorithme Génétique : ");
+
+
+            Console.WriteLine("Taille de la population (entier > 0) :");
+            if (!GetCorrectInt(out populationSize, (val) => val >= 0))
+            {
+                return false;
+            }
+
+            Console.WriteLine("Nombre de générations de l'exécution (entier > 0) : ");
+            if (!GetCorrectInt(out steps, (val) => val > 0))
+            {
+                return false;
+            }
+
+            Console.WriteLine("Chance de mutation (réel de [0,1[ très faible, de l'ordre de .005) : ");
+            if (!GetCorrectDouble(out mutationChance, (val) => val >= 0 && val < 1d))
+            {
+                return false;
+            }
+
+
+            Console.WriteLine("Elitisme, nombre de meilleurs individus conservés par génération, prenez une valeur faible (>= 0, < population) : ");
+            if (!GetCorrectInt(out elitism, (val) => val >= 0 && val < populationSize))
+            {
+                return false;
+            }
+
+
+            Console.WriteLine("New Blood, nombre de nouveaux individus entièrement aléatoire ré-introduit à chaque génération (>= 0, < population) : ");
+            if (!GetCorrectInt(out newBlood, (val) => val >= 0 && val < (populationSize - elitism) ))
+            {
+                return false;
+            }
+
+
+            GeneticAlgorithmParameters param = new GeneticAlgorithmParameters(populationSize, steps, mutationChance, elitism, newBlood);
+
+            //param = new RecuitSimuleParameters(qap.N);
+            Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
+            Console.WriteLine(param.ToString());
+
+            string str = "";
+            if (!GetCorrectString(out str, (s) => IsValidation(s)))
+            {
+                return false;
+            }
+
+            if (!IsYes(str))
+            {
+                return false;
+            }
+
+            //Lancer l'exécution
+
+            algo.Verbose = true;
+            algo.WithLogs = true;
+
+            bestFitness = algo.Run(param).Fitness;
+
+            Console.WriteLine("Paramètres :");
+            Console.WriteLine(param.ToString());
+
+            Console.WriteLine("Résultats :");
+            Console.WriteLine(algo.Logs.FinalLog.ToString());
+
+            paramString = param.ToString();
+            resultString = algo.Logs.FinalLog.ToString();
+
+            //Save Results
+            SaveResults();
+            Console.WriteLine("Résultats sauvegardées dans " + GetResultPath() + "!");
+
+            //Save Logs
+            algo.Logs.SaveLogsTo(GetCSVPath());
+            Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
+
+            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
+            Console.ReadKey();
+            Console.WriteLine();
+            return true;
+        }
         #region Get Correct Values
         /// <summary>
         /// Ask to read a double until the condition is met. Return true if succeed, false is exit/quit.
@@ -500,6 +612,8 @@ namespace Metaheuristic
 
             str += "\tEntrez 'r' ou 'rec' ou 'recuit' pour lancer un Recuit Simulé\n";
             str += "\tEntrez 'tab' ou 'tabou' pour lancer une Méthode Tabou\n";
+            str += "\tEntrez 'ga' ou 'genetic' pour lancer un Algorithme Génétique\n";
+            str += "\tEntrez 'garec' ou 'recuitga' pour lancer Algorithme Génétique pour Recuit Simulé\n";
 
             str += "\n\tEntrez 'x' ou 'e' ou 'exit' pour retourner au menu n'importe quand\n";
             str += "\tEntrez 'q' ou 'quit' pour quitter\n";

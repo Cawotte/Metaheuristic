@@ -109,9 +109,9 @@ namespace Metaheuristic.GA
 
         }
 
-        public void WriteTo(string path)
+        public void SaveLogsTo(string path)
         {
-            using (var writer = new StreamWriter("test2.csv"))
+            using (var writer = new StreamWriter(path))
             using (var csv = new CsvWriter(writer))
             {
                 csv.WriteRecords(logs);

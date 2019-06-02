@@ -11,7 +11,7 @@ namespace Metaheuristic.MethodeTabou
     /**
      * Pick des voisins : Seulement prendre les voisins avec des emplacements à une distance X ou moins.
      * */
-    public class Tabou
+    public class AbstactGeneticAlgorithm
     {
         public bool Verbose = true;
 
@@ -24,7 +24,7 @@ namespace Metaheuristic.MethodeTabou
 
         public TabouLogs Logs { get => logs; }
 
-        public Tabou(QuadraticAssignment problem)
+        public AbstactGeneticAlgorithm(QuadraticAssignment problem)
         {
             this.problem = problem;
         }

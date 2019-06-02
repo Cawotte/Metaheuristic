@@ -45,6 +45,11 @@ namespace Metaheuristic.GA
         public GALogs<T> Logs { get => logs; }
         #endregion
 
+        //TODO : Ugly
+        protected AbstractGeneticAlgorithm()
+        {
+        }
+
         protected AbstractGeneticAlgorithm(
                                     int populationSize,
                                     int maxSteps,
@@ -63,6 +68,22 @@ namespace Metaheuristic.GA
                 throw new InvalidGAException("There can't be more elitism and new blood than population size!");
             }
             
+        }
+
+        public T Run(GeneticAlgorithmParameters param)
+        {
+            this.populationSize = param.PopulationSize;
+            this.maxSteps = param.MaxSteps;
+            this.mutationChance = param.MutationChance;
+            this.elitism = param.Elitism;
+            this.newBlood = param.NewBlood;
+
+            if (elitism + newBlood >= populationSize)
+            {
+                throw new InvalidGAException("There can't be more elitism and new blood than population size!");
+            }
+
+            return Run();
         }
 
         public T Run()
