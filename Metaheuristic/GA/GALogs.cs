@@ -175,6 +175,7 @@ namespace Metaheuristic.GA
             public override string ToString()
             {
                 string str = "";
+                str += "\nBest Solution : " + Best.ToString();
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nAverage GA Fitness : " + AverageFitness;
                 str += "\nAverage Diversity : " + AverageDiversity + "%";

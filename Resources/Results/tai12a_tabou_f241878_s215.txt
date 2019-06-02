@@ -1,0 +1,17 @@
+Méthode Tabou
+Parametres :
+
+N : 12
+S0 : {1,2,3,8,5,11,4,7,9,6,10,12}
+Size Tabou : 20
+Nbsteps : 100
+
+
+Resultats:
+
+Average Tabou Size : 14
+Best Solution : {4,12,10,9,7,11,5,3,8,6,1,2}
+Best Fitness : 241878
+Total Improvement : 23,6438%
+Nb Uphills : 19
+Nb Downhills : 19

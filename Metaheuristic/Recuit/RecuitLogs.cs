@@ -56,10 +56,12 @@ namespace Metaheuristic.Recuit
                 //Uphill depends on if the solution is improving or not. 0 = improving
                 if (current.Fitness < Last.CurrentFitness)
                 {
+                    //Improved
                     step.HasImproved = -1;
                 }
                 else if (current.Fitness > Last.CurrentFitness)
                 {
+                    //Not Improve
                     step.HasImproved = 1;
                 }
                 else
@@ -103,6 +105,8 @@ namespace Metaheuristic.Recuit
                 }
             }
 
+            final.ImprovementChart = ToStringImprovements();
+
 
             //save it
             finalLog = final;
@@ -120,10 +124,10 @@ namespace Metaheuristic.Recuit
                         str += "o";
                         break;
                     case 1:
-                        str += "+";
+                        str += "-"; //worse
                         break;
                     case -1:
-                        str += "-";
+                        str += "+"; //better
                         break;
                 }
             }
@@ -215,12 +219,14 @@ namespace Metaheuristic.Recuit
             public double FinalTemperature;
             public int NbWorsePicked;
 
+            public string ImprovementChart;
+
             public override string ToString()
             {
                 string str = "";
                 str += "\nFinal Temperature: " + FinalTemperature;
-                str += "\nNb Worse Picks : " + NbWorsePicked;
-
+                str += "\nNumber of Worse Solution Picked : " + NbWorsePicked;
+                str += "\nImprovement chart : " + ImprovementChart;
                 str += "\nBest Solution : " + Best.ToString();
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nTotal Improvement : " + BestImprovement + "%";

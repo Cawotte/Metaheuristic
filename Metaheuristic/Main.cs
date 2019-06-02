@@ -127,7 +127,9 @@ namespace Metaheuristic
                     case "garecuit":
                     case "garec":
                         algo = Algo.RecuitGA;
-                        GeneticAlgorithmRecuit garec = new GeneticAlgorithmRecuit(new RecuitSimule(qap));
+                        RecuitSimule recuit = new RecuitSimule(qap);
+                        recuit.Verbose = false;
+                        GeneticAlgorithmRecuit garec = new GeneticAlgorithmRecuit(recuit);
 
                         Console.WriteLine("Vous avez sélectionné l'Algorithme Génétique pour RECUIT SIMULE !");
                         

@@ -111,7 +111,8 @@ namespace Metaheuristic.Recuit
                 //Additional terminal condition : If Temperature is extremely cold
                 if (temperature < 0.1d)
                 {
-                    Console.WriteLine("Temperature is very low ! Algorithm has been stopped early. Step = " + i);
+                    if (Verbose)
+                        Console.WriteLine("Temperature is very low ! Algorithm has been stopped early. Step = " + i);
                     break;
                 }
             }

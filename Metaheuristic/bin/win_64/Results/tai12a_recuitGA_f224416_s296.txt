@@ -1,0 +1,25 @@
+Paramètre Recuit Simule sur Algo Génétique
+Parametres :
+
+ Population Size : 40
+ Number of Generations : 20
+ Mutation Chance : 0,005
+ Elitism : 1
+ New Blood : 5
+
+
+Resultats:
+
+Best Solution : 
+N : 12
+S0 : {6,9,2,4,10,1,12,3,5,7,11,8}
+T0 : 364136,27
+Temp_Decrease : 0,67
+MaxSteps : 1340
+Neighbors per Step : 19
+
+Best Fitness : 224416
+Average GA Fitness : 255485
+Average Diversity : 97,26%
+Average Improvement : -0,0963%
+Improvement between initial and best : 4,4176%

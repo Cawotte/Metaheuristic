@@ -82,7 +82,7 @@ namespace Metaheuristic.Recuit
 
         public double GetRandomInitialTemp()
         {
-            return rand.NextDouble() * 100000d;
+            return rand.NextDouble() * 1000000d;
         }
 
         public double GetRandomTemperatureDecrease()
