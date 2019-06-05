@@ -72,7 +72,7 @@ namespace Metaheuristic.MethodTabou
             logs.Add(step);
         }
 
-        public void AddFinalLog()
+        public void AddFinalLog(double timeEllasped)
         {
             LastLogTabou final = new LastLogTabou();
 
@@ -104,6 +104,7 @@ namespace Metaheuristic.MethodTabou
 
             final.AverageTabouSize = (int)logs.Average(log => log.CurrentTabouSize);
 
+            final.timeEllapsed = timeEllasped;
             //save it
             finalLog = final;
 
@@ -218,6 +219,8 @@ namespace Metaheuristic.MethodTabou
             //tabou size
             public int AverageTabouSize;
 
+            public double timeEllapsed;
+
             public override string ToString()
             {
                 string str = "";
@@ -228,8 +231,8 @@ namespace Metaheuristic.MethodTabou
                 str += "\nTotal Improvement : " + BestImprovement + "%";
 
 
-                str += "\nNb Uphills : " + Uphills;
-                str += "\nNb Downhills : " + Uphills;
+                str += "\nNb Up/Downhills : " + Uphills;
+                str += "\nExecution Time : " + timeEllapsed + "ms";
 
                 str += "\n";
 

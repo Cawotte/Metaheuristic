@@ -4,6 +4,7 @@ namespace Metaheuristic.Recuit
     using Metaheuristic.QAP;
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Text;
 
 
@@ -34,6 +35,8 @@ namespace Metaheuristic.Recuit
                                                     int maxSteps, 
                                                     int nbNeighborPerStep)
         {
+            Stopwatch stopWatch = Stopwatch.StartNew();
+            
             //setup
             QuadraticAssignmentSolution current = initialSol;
 
@@ -118,8 +121,8 @@ namespace Metaheuristic.Recuit
                 }
             }
 
-            logs.AddFinalLog();
-
+            logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
+            stopWatch.Stop();
             if (Verbose)
             {
                 Console.WriteLine("---- Meilleur résultat :");

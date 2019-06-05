@@ -83,7 +83,7 @@ namespace Metaheuristic.GA
             logs.Add(step);
         }
 
-        public void AddFinalLog()
+        public void AddFinalLog(double timeEllapsed)
         {
             FinalLogStep<T> final = new FinalLogStep<T>();
 
@@ -102,7 +102,9 @@ namespace Metaheuristic.GA
 
             //Average Fitness
             final.AverageFitness = (int)logs.Average(step => step.AverageFitness);
-            
+
+
+            final.timeEllapsed = timeEllapsed;
 
             //save it
             finalLog = final;
@@ -171,7 +173,10 @@ namespace Metaheuristic.GA
             public T Best;
             public int BestFitness;
             public double BestImprovement;
-            
+
+            public double timeEllapsed;
+
+
             public override string ToString()
             {
                 string str = "";
@@ -181,6 +186,7 @@ namespace Metaheuristic.GA
                 str += "\nAverage Diversity : " + AverageDiversity + "%";
                 str += "\nAverage Improvement : " + AverageImprovement + "%";
                 str += "\nImprovement between initial and best : " + BestImprovement + "%";
+                str += "\nExecution Time : " + timeEllapsed + "ms";
                 str += "\n";
 
                 return str;

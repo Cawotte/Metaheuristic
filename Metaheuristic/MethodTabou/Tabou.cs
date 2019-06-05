@@ -7,6 +7,7 @@ namespace Metaheuristic.MethodeTabou
     using Metaheuristic.QAP;
     using System.Linq;
     using Metaheuristic.MethodTabou;
+    using System.Diagnostics;
 
     /**
      * Pick des voisins : Seulement prendre les voisins avec des emplacements à une distance X ou moins.
@@ -42,6 +43,8 @@ namespace Metaheuristic.MethodeTabou
             int sizeTabou,
             int nbSteps)
         {
+
+            Stopwatch stopWatch = Stopwatch.StartNew();
 
             //Initialization
             forbiddenMoves = new Queue<Tuple<int, int>>();
@@ -102,7 +105,9 @@ namespace Metaheuristic.MethodeTabou
 
             }
 
-            logs.AddFinalLog();
+            logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
+
+            stopWatch.Stop();
 
             return best;
         }

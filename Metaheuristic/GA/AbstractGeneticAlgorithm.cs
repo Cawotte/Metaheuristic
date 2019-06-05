@@ -7,6 +7,7 @@ namespace Metaheuristic.GA
     using System.Collections.Generic;
     using System.Text;
     using System.Linq;
+    using System.Diagnostics;
 
     public abstract class AbstractGeneticAlgorithm<T> where T : IChromosome
     {
@@ -94,6 +95,7 @@ namespace Metaheuristic.GA
                 Console.WriteLine("Generation #0...");
             }
 
+            Stopwatch stopWatch = Stopwatch.StartNew(); 
             InitializePopulation();
             ComputePopulationFitnesses(true);
 
@@ -164,10 +166,11 @@ namespace Metaheuristic.GA
             }
             if (WithLogs)
             {
-                logs.AddFinalLog();
+                logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
                 if (Verbose)
                     Console.WriteLine("#Final Log :" + logs.FinalLog.ToString());
             }
+            stopWatch.Stop();
 
             return BestIndividual;
             /***
