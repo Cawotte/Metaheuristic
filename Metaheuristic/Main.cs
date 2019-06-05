@@ -96,9 +96,14 @@ namespace Metaheuristic
                             {
                                 Console.WriteLine("Fichier non trouvé ! Réessayer ou quitter (x or exit):");
                             }
+                            else
+                            {
+                                //Update QAP
+                                filename = line[0];
+                                qap = new QuadraticAssignment(GetInstancePath(filename));
+                                bestKnownSolution = new QuadraticAssignmentSolution(GetSolutionPath(filename), true);
+                            }
                         }
-
-                        filename = line[0];
 
                         break;
                     case "r":
@@ -376,7 +381,7 @@ namespace Metaheuristic
 
 
             Console.WriteLine("Elitisme, nombre de meilleurs individus conservés par génération, prenez une valeur faible (>= 0, < population) : ");
-            if (!GetCorrectInt(out elitism, (val) => val >= 0 && val < populationSize))
+            if (!GetCorrectInt(out elitism, (val) => val >= 0d && val < populationSize))
             {
                 return false;
             }
