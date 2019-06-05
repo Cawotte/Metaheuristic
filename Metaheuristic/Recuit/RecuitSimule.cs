@@ -66,8 +66,9 @@ namespace Metaheuristic.Recuit
                 {
                     Console.WriteLine("Step #" + (i + 1));
                 }
-                    //Try X neighbors at that temperature
-                    for (int j = 0; j < nbNeighborPerStep; j++)
+
+                //Try X neighbors at that temperature
+                for (int j = 0; j < nbNeighborPerStep; j++)
                 {
 
                     //Randomly get a neighbor
@@ -109,7 +110,7 @@ namespace Metaheuristic.Recuit
                 logs.AddStep(current, best, temperature);
 
                 //Additional terminal condition : If Temperature is extremely cold
-                if (temperature < 0.1d)
+                if (temperature < 1d)
                 {
                     if (Verbose)
                         Console.WriteLine("Temperature is very low ! Algorithm has been stopped early. Step = " + i);

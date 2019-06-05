@@ -72,7 +72,7 @@ namespace Metaheuristic.MethodeTabou
                 solution.Fitness = problem.Evaluate(solution);
 
                 //If it's a better solution
-                if (solution.Fitness < current.Fitness)
+                if (solution.Fitness < best.Fitness)
                 {
                     best = solution;
 
