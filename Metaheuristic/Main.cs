@@ -37,6 +37,8 @@ namespace Metaheuristic
         private static string paramString = "";
         private static string resultString = "";
 
+        private static List<string> massResults = new List<string>();
+
         static void Main()
         {
             seed = new Random().Next(0, 1000); //random default seed
@@ -49,6 +51,7 @@ namespace Metaheuristic
 
             List<string> allNames = new List<string>();
             bool interrupted = false;
+            string allText;
 
             while (state != State.Quit)
             {
@@ -145,7 +148,10 @@ namespace Metaheuristic
                     case "allt":
                         allNames = GetAllInstances();
                         interrupted = false;
+
                         TabouParameters paramTabou = GetParamTabou(out interrupted);
+                        allText = paramTabou.ToString();
+
                         if (interrupted) {
                             break;
                         }
@@ -155,13 +161,26 @@ namespace Metaheuristic
 
                             paramTabou.InitialSol = new QuadraticAssignmentSolution(qap.N);
                             RunTabou(false, paramTabou);
+
+                            allText += "\n\n" + instanceName + ":\n";
+                            allText += "Resultats:\n" + resultString + ComparisonWithBest();
+                            allText += "\n----";
+
                         }
+                        
+                        allText = allText.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                        string fullNameAllTabou = Path.Combine(resultPath, "all_" + algo.GetString() + "_s" + seed + ".txt");
+                        System.IO.File.WriteAllText(fullNameAllTabou, allText);
+
                         break;
                     case "allrec":
                     case "allr":
                         allNames = GetAllInstances();
                         interrupted = false;
+
                         RecuitSimuleParameters paramRec = GetParamRecuit(out interrupted);
+                        allText = paramRec.ToString();
+
                         if (interrupted)
                         {
                             break;
@@ -173,7 +192,16 @@ namespace Metaheuristic
 
                             paramRec.InitialSol = new QuadraticAssignmentSolution(qap.N);
                             RunRecuit(false, paramRec);
+
+                            allText += "\n\n" + instanceName + ":\n";
+                            allText += "Resultats:\n" + resultString + ComparisonWithBest();
+                            allText += "\n----";
                         }
+
+                        allText = allText.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                        string fullNameAllRec = Path.Combine(resultPath, "all_" + algo.GetString() + "_s" + seed + ".txt");
+                        System.IO.File.WriteAllText(fullNameAllRec, allText);
+
                         break;
                     default:
                         Console.WriteLine("\nCommande invalide!");
