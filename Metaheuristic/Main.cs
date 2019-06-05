@@ -277,8 +277,8 @@ namespace Metaheuristic
             Console.WriteLine("Veuillez entrez les paramètres du Tabou : ");
 
 
-            Console.WriteLine("Taille de la liste Tabou (>= 0) :");
-            if (!GetCorrectInt(out sizeTabou, (val) => val >= 0))
+            Console.WriteLine("Taille de la liste Tabou (>= 0 et plus petit que nb voisins possibles) :");
+            if (!GetCorrectInt(out sizeTabou, (val) => val >= 0 && val < qap.Inversions.Length))
             {
                 interrupted = true;
                 return null;
@@ -466,6 +466,7 @@ namespace Metaheuristic
         {
             string[] line;
             string str;
+            bool stopCondition;
             do
             {
 
@@ -479,12 +480,12 @@ namespace Metaheuristic
                 }
 
                 bool isNumber = TryGetInt(str, out number);
-
-                if (!isNumber)
+                stopCondition = isNumber && condition(number);
+                if (!stopCondition)
                 {
-                    Console.WriteLine("Veuillez entrez un nombre correct");
+                    Console.WriteLine("/!\\ Veuillez entrez un nombre satisfaisant la condition");
                 }
-            } while (!condition(number));
+            } while (!stopCondition);
 
             return true;
 
@@ -502,6 +503,7 @@ namespace Metaheuristic
         {
             string[] line;
             string str;
+            bool stopCondition;
             do
             {
 
@@ -515,12 +517,13 @@ namespace Metaheuristic
                 }
 
                 bool isNumber = TryGetDouble(str, out number);
+                stopCondition = isNumber && condition(number);
 
-                if (!isNumber)
+                if (!stopCondition)
                 {
-                    Console.WriteLine("Veuillez entrez un nombre correct");
+                    Console.WriteLine("/!\\ Veuillez entrez un nombre satisfaisant la condition");
                 }
-            } while (!condition(number));
+            } while (!stopCondition);
 
             return true;
 
