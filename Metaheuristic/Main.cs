@@ -558,7 +558,8 @@ namespace Metaheuristic
             }
             str += "\nParametres :\n" +
                 paramString + "\n\n" +
-                "Resultats:\n" + resultString;
+                "Resultats:\n" + resultString +
+                "\n" + ComparisonWithBest();
 
             //put good CLRF
             str = str.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
@@ -636,6 +637,24 @@ namespace Metaheuristic
                 "Meilleure solution : " + bestKnownSolution.ToString() + "\n" +
                 "Fitness meilleur solution : " + bestKnownSolution.Fitness + "\n"
                 ;
+        }
+
+        private static string ComparisonWithBest()
+        {
+            string str = "\nComparison with very best :";
+            str += "\nKnown best :" + bestKnownSolution.ToString();
+            str += "\nKnown best Fitness :" + bestKnownSolution.Fitness;
+
+
+            str += "\nDifference between best found and know :" + (bestFitness -bestKnownSolution.Fitness );
+            str += "\n% between best found and know :" + GetImprovement(bestFitness, bestKnownSolution.Fitness) + "%";
+
+
+            return str;
+        }
+        private static double GetImprovement(int lastFitness, int newFitness)
+        {
+            return Math.Round((1d - (double)newFitness / (double)lastFitness) * 100, 4);
         }
 
         #region Test on String Input
