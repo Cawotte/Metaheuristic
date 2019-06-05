@@ -95,7 +95,7 @@ namespace Metaheuristic.QAP
 
             file.Close();
 
-            if (!IsValid(solution))
+            if (!IsValid(solution) && !TryUpscaleSolution())
             {
                 throw new InvalidQAPException("This is not a valid solution!");
             }
@@ -152,6 +152,7 @@ namespace Metaheuristic.QAP
             return new QuadraticAssignmentSolution(this);
         }
 
+
         #region Override
         public override string ToString()
         {
@@ -185,7 +186,16 @@ namespace Metaheuristic.QAP
         }
         #endregion
 
+        public bool TryUpscaleSolution()
+        {
+            //quick fix tai40a which has a value at 0 instead of 1
+            for (int i = 0; i < solution.Length; i++)
+            {
+                solution[i]++;
+            }
 
+            return IsValid();
+        }
 
         /// <summary>
         /// Apply an inversion on that solution. (It modify the current one!)

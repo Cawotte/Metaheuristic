@@ -47,6 +47,9 @@ namespace Metaheuristic
             qap = new QuadraticAssignment(GetInstancePath(filename));
             bestKnownSolution = new QuadraticAssignmentSolution(GetSolutionPath(filename), true);
 
+            List<string> allNames = new List<string>();
+            bool interrupted = false;
+
             while (state != State.Quit)
             {
                 Console.WriteLine("------------");
@@ -138,17 +141,39 @@ namespace Metaheuristic
                         
                         RunGeneticAlgorithm(garec);
                         break;
+                    case "alltab":
+                    case "allt":
+                        allNames = GetAllInstances();
+                        interrupted = false;
+                        TabouParameters paramTabou = GetParamTabou(out interrupted);
+                        if (interrupted) {
+                            break;
+                        }
 
-                    case "test":
-                        string csv = GetNameCSV();
-                        string txt = GetNameTxt();
+                        foreach (string instanceName in allNames) {
+                            ChangeInstance(instanceName);
 
+                            paramTabou.InitialSol = new QuadraticAssignmentSolution(qap.N);
+                            RunTabou(false, paramTabou);
+                        }
+                        break;
+                    case "allrec":
+                    case "allr":
+                        allNames = GetAllInstances();
+                        interrupted = false;
+                        RecuitSimuleParameters paramRec = GetParamRecuit(out interrupted);
+                        if (interrupted)
+                        {
+                            break;
+                        }
 
-                        File.Create(resultPath + csv).Dispose();
-                        File.Create(resultPath + txt).Dispose();
+                        foreach (string instanceName in allNames)
+                        {
+                            ChangeInstance(instanceName);
 
-
-                        Console.WriteLine("\nFichiers crées!");
+                            paramRec.InitialSol = new QuadraticAssignmentSolution(qap.N);
+                            RunRecuit(false, paramRec);
+                        }
                         break;
                     default:
                         Console.WriteLine("\nCommande invalide!");
@@ -189,84 +214,33 @@ namespace Metaheuristic
 
         }
 
-        #region Executions
-        private static bool RunRecuit()
-        {
-            algo = Algo.Recuit;
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
-            double initialTemp = -1d;
-            double temperatureDecrease = -1d;
-            int maxSteps = -1;
-            RecuitSimuleParameters param;
+        private static List<string> GetAllInstances() {
+            List<string> instancesNames = new List<string>();
+            instancesNames.Add("tai12a");
+            instancesNames.Add("tai15a");
+            instancesNames.Add("tai17a");
+            instancesNames.Add("tai20a");
+            instancesNames.Add("tai25a");
+            instancesNames.Add("tai30a");
+            instancesNames.Add("tai35a");
+            instancesNames.Add("tai40a");
+            instancesNames.Add("tai50a");
+            instancesNames.Add("tai60a");
+            instancesNames.Add("tai80a");
+            instancesNames.Add("tai100a");
 
-            Console.WriteLine("Veuillez entrez les paramètres du Recuit : ");
-            
-            Console.WriteLine("Température Initiale (Prenez un grand nombre > 0 de l'ordre des fitness) :");
-            if ( !GetCorrectDouble(out initialTemp, (val) => val > 0d) )
-            {
-                return false;
-            }
-
-            Console.WriteLine("Baisse de Température ( Réel à ]0,1[ ) :");
-            if (!GetCorrectDouble(out temperatureDecrease, (val) => val > 0d && val < 1d))
-            {
-                return false;
-            }
-
-            Console.WriteLine("Nombre d'étapes de l'exécution ( > 0) : ");
-            if (!GetCorrectInt(out maxSteps, (val) => val > 0))
-            {
-                return false;
-            }
-            
-
-            param = new RecuitSimuleParameters(initialSol, initialTemp, temperatureDecrease, maxSteps);
-            
-            //param = new RecuitSimuleParameters(qap.N);
-            Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
-            Console.WriteLine(param.ToString());
-
-            string str = "";
-            if (!GetCorrectString(out str, (s) => IsValidation(s)))
-            {
-                return false;
-            }
-
-            if (!IsYes(str)) {
-                return false;
-            }
-
-            //Lancer l'exécution
-            RecuitSimule recuit = new RecuitSimule(qap);
-
-            recuit.Verbose = true;
-
-            bestFitness = recuit.Execute(param).Fitness;
-
-            Console.WriteLine("Paramètres :");
-            Console.WriteLine(param.ToString());
-
-            Console.WriteLine("Résultats :");
-            Console.WriteLine(recuit.Logs.FinalLog.ToString());
-
-            paramString = param.ToString();
-            resultString = recuit.Logs.FinalLog.ToString();
-
-            //Save Results
-            SaveResults();
-            Console.WriteLine("Résultats sauvegardées dans " + GetResultPath() + "!");
-
-            //Save Logs
-            recuit.Logs.SaveLogsTo(GetCSVPath());
-            Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
-
-            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
-            Console.ReadKey();
-            Console.WriteLine();
-
-
-            return true;
+            return instancesNames;
         }
+        private static void ChangeInstance(string fname)
+        {
+            filename = fname;
+            qap = new QuadraticAssignment(GetInstancePath(filename));
+            bestKnownSolution = new QuadraticAssignmentSolution(GetSolutionPath(filename), true);
+        }
+
+        #region Executions
+
+        #region Get Params
 
         private static TabouParameters GetParamTabou(out bool interrupted)
         {
@@ -295,21 +269,127 @@ namespace Metaheuristic
             return new TabouParameters(initialSol, sizeTabou, steps);
         }
 
-        private static bool RunTabou(bool verbose = true)
+        private static RecuitSimuleParameters GetParamRecuit(out bool interrupted)
+        {
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+            double initialTemp = -1d;
+            double temperatureDecrease = -1d;
+            int maxSteps = -1;
+
+            Console.WriteLine("Veuillez entrez les paramètres du Recuit : ");
+
+            Console.WriteLine("Température Initiale (Prenez un grand nombre > 0 de l'ordre des fitness) :");
+            if (!GetCorrectDouble(out initialTemp, (val) => val > 0d))
+            {
+                interrupted = true;
+                return null;
+            }
+
+            Console.WriteLine("Baisse de Température ( Réel à ]0,1[ ) :");
+            if (!GetCorrectDouble(out temperatureDecrease, (val) => val > 0d && val < 1d))
+            {
+                interrupted = true;
+                return null;
+            }
+
+            Console.WriteLine("Nombre d'étapes de l'exécution ( > 0) : ");
+            if (!GetCorrectInt(out maxSteps, (val) => val > 0))
+            {
+                interrupted = true;
+                return null;
+            }
+
+
+            interrupted = false;
+            return new RecuitSimuleParameters(initialSol, initialTemp, temperatureDecrease, maxSteps);
+        }
+
+        #endregion
+
+        #region Run
+
+        private static bool RunRecuit(bool verbose = true, RecuitSimuleParameters param = null)
+        {
+            algo = Algo.Recuit;
+            bool interrupted = false;
+
+            if (verbose)
+            {
+                param = GetParamRecuit(out interrupted);
+                if (interrupted)
+                {
+                    return false;
+                }
+
+
+                //param = new RecuitSimuleParameters(qap.N);
+                Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
+                Console.WriteLine(param.ToString());
+
+                string str = "";
+                if (!GetCorrectString(out str, (s) => IsValidation(s)))
+                {
+                    return false;
+                }
+
+                if (!IsYes(str))
+                {
+                    return false;
+                }
+            }
+            
+
+            //Lancer l'exécution
+            RecuitSimule recuit = new RecuitSimule(qap);
+
+            recuit.Verbose = true;
+
+            bestFitness = recuit.Execute(param).Fitness;
+
+            Console.WriteLine("Paramètres :");
+            Console.WriteLine(param.ToString());
+
+            Console.WriteLine("Résultats :");
+            Console.WriteLine(recuit.Logs.FinalLog.ToString());
+
+            paramString = param.ToString();
+            resultString = recuit.Logs.FinalLog.ToString();
+
+            //Save Results
+            SaveResults();
+            Console.WriteLine("Résultats sauvegardées dans " + GetResultPath() + "!");
+
+            //Save Logs
+            recuit.Logs.SaveLogsTo(GetCSVPath());
+            Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
+
+            if (verbose)
+            {
+
+                Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
+                Console.ReadKey();
+                Console.WriteLine();
+            }
+
+
+            return true;
+        }
+
+        private static bool RunTabou(bool verbose = true, TabouParameters param = null)
         {
 
             algo = Algo.Tabou;
             bool interrupted = false;
-            TabouParameters param;
-
-            param = GetParamTabou(out interrupted);
-            if (interrupted)
-            {
-                return false;
-            }
-
             if (verbose)
             {
+
+                param = GetParamTabou(out interrupted);
+                if (interrupted)
+                {
+                    return false;
+                }
+
+
                 //param = new RecuitSimuleParameters(qap.N);
                 Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
                 Console.WriteLine(param.ToString());
@@ -453,6 +533,8 @@ namespace Metaheuristic
             Console.WriteLine();
             return true;
         }
+
+        #endregion
         #endregion
 
         #region Get Correct Values
@@ -639,7 +721,11 @@ namespace Metaheuristic
             str += "\tEntrez 'r' ou 'rec' ou 'recuit' pour lancer un Recuit Simulé\n";
             str += "\tEntrez 'tab' ou 'tabou' pour lancer une Méthode Tabou\n";
             str += "\tEntrez 'ga' ou 'genetic' pour lancer un Algorithme Génétique\n";
-            str += "\tEntrez 'garec' ou 'recuitga' pour lancer Algorithme Génétique pour Recuit Simulé\n";
+            str += "\tEntrez 'garec' ou 'recuitga' pour lancer Algorithme Génétique pour Recuit Simulé\n\n";
+
+
+            str += "\tEntrez 'allr' ou 'allrec' pour lancer le Recuit pour TOUTES les instances avec les mêmes paramètres\n";
+            str += "\tEntrez 'allt' ou 'alltabou' pour lancer le Tabou pour TOUTES les instances avec les mêmes paramètres\n";
 
             str += "\n\tEntrez 'x' ou 'e' ou 'exit' pour retourner au menu n'importe quand\n";
             str += "\tEntrez 'q' ou 'quit' pour quitter\n";
