@@ -109,12 +109,10 @@ namespace Metaheuristic
                     case "r":
                     case "rec":
                     case "recuit":
-                        algo = Algo.Recuit;
                         RunRecuit();
                         break;
                     case "tab":
                     case "tabou":
-                        algo = Algo.Tabou;
                         RunTabou();
                         break;
 
@@ -190,7 +188,8 @@ namespace Metaheuristic
             }
 
         }
-        
+
+        #region Executions
         private static bool RunRecuit()
         {
             algo = Algo.Recuit;
@@ -198,7 +197,6 @@ namespace Metaheuristic
             double initialTemp = -1d;
             double temperatureDecrease = -1d;
             int maxSteps = -1;
-            int nbNeighborPerStep = -1;
             RecuitSimuleParameters param;
 
             Console.WriteLine("Veuillez entrez les paramètres du Recuit : ");
@@ -220,14 +218,9 @@ namespace Metaheuristic
             {
                 return false;
             }
+            
 
-            Console.WriteLine("Nombre de voisins à tester par étapes (> 0) :");
-            if (!GetCorrectInt(out nbNeighborPerStep, (val) => val > 0))
-            {
-                return false;
-            }
-
-            param = new RecuitSimuleParameters(initialSol, initialTemp, temperatureDecrease, maxSteps, nbNeighborPerStep);
+            param = new RecuitSimuleParameters(initialSol, initialTemp, temperatureDecrease, maxSteps);
             
             //param = new RecuitSimuleParameters(qap.N);
             Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
@@ -275,14 +268,11 @@ namespace Metaheuristic
             return true;
         }
 
-        private static bool RunTabou()
+        private static TabouParameters GetParamTabou(out bool interrupted)
         {
-
-            algo = Algo.Tabou;
             QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
             int sizeTabou = -1;
             int steps = -1;
-            TabouParameters param;
 
             Console.WriteLine("Veuillez entrez les paramètres du Tabou : ");
 
@@ -290,32 +280,52 @@ namespace Metaheuristic
             Console.WriteLine("Taille de la liste Tabou (>= 0) :");
             if (!GetCorrectInt(out sizeTabou, (val) => val >= 0))
             {
-                return false;
+                interrupted = true;
+                return null;
             }
 
             Console.WriteLine("Nombre d'étapes de l'exécution ( > 0) : ");
             if (!GetCorrectInt(out steps, (val) => val > 0))
             {
-                return false;
+                interrupted = true;
+                return null;
             }
 
+            interrupted = false;
+            return new TabouParameters(initialSol, sizeTabou, steps);
+        }
 
-            param = new TabouParameters(initialSol, sizeTabou, steps);
+        private static bool RunTabou(bool verbose = true)
+        {
 
-            //param = new RecuitSimuleParameters(qap.N);
-            Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
-            Console.WriteLine(param.ToString());
+            algo = Algo.Tabou;
+            bool interrupted = false;
+            TabouParameters param;
 
-            string str = "";
-            if (!GetCorrectString(out str, (s) => IsValidation(s)))
+            param = GetParamTabou(out interrupted);
+            if (interrupted)
             {
                 return false;
             }
 
-            if (!IsYes(str))
+            if (verbose)
             {
-                return false;
+                //param = new RecuitSimuleParameters(qap.N);
+                Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
+                Console.WriteLine(param.ToString());
+
+                string str = "";
+                if (!GetCorrectString(out str, (s) => IsValidation(s)))
+                {
+                    return false;
+                }
+
+                if (!IsYes(str))
+                {
+                    return false;
+                }
             }
+            
 
             //Lancer l'exécution
             AbstactGeneticAlgorithm tabou = new AbstactGeneticAlgorithm(qap);
@@ -341,9 +351,12 @@ namespace Metaheuristic
             tabou.Logs.SaveLogsTo(GetCSVPath());
             Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
 
-            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
-            Console.ReadKey();
-            Console.WriteLine();
+            if (verbose)
+            {
+                Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
+                Console.ReadKey();
+                Console.WriteLine();
+            }
 
             return true;
         }
@@ -440,6 +453,8 @@ namespace Metaheuristic
             Console.WriteLine();
             return true;
         }
+        #endregion
+
         #region Get Correct Values
         /// <summary>
         /// Ask to read a double until the condition is met. Return true if succeed, false is exit/quit.

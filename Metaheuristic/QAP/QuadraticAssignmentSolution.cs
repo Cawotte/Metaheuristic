@@ -240,6 +240,22 @@ namespace Metaheuristic.QAP
         {
             return GetNeighbor(GetRandomInversion());
         }
+        public QuadraticAssignmentSolution[] GetRandomNeighbors(int count)
+        {
+            Tuple<int, int>[] inversions = QuadraticAssignment.GetInversions(n);
+
+            //Shuffle inversions
+            inversions = Utils.Shuffle<Tuple<int, int>>(inversions.ToList()).ToArray();
+
+            //Get first counts
+            QuadraticAssignmentSolution[] neighbors = new QuadraticAssignmentSolution[count];
+            for (int i = 0; i < count; i++)
+            {
+                neighbors[i] = GetNeighbor(inversions[i]);
+            }
+
+            return neighbors;
+        }
 
         /// <summary>
         /// Get a random adjacent neighbor of the solution

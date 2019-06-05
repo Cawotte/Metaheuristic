@@ -32,8 +32,7 @@ namespace Metaheuristic.Recuit
         public QuadraticAssignmentSolution Execute(QuadraticAssignmentSolution initialSol, 
                                                     double initialTemp, 
                                                     double temperatureDecrease, 
-                                                    int maxSteps, 
-                                                    int nbNeighborPerStep)
+                                                    int maxSteps)
         {
             Stopwatch stopWatch = Stopwatch.StartNew();
             
@@ -46,6 +45,7 @@ namespace Metaheuristic.Recuit
 
             //Parameters
             double temperature = initialTemp;
+            int stagnantCount = 0;
 
             //Init logs
             logs = new RecuitLogs();
@@ -60,7 +60,7 @@ namespace Metaheuristic.Recuit
                 Console.WriteLine("---- Parameters :");
                 Console.WriteLine("uTemp : " + temperatureDecrease);
                 Console.WriteLine("maxSteps : " + maxSteps);
-                Console.WriteLine("nbNeighborPerStep : " + nbNeighborPerStep);
+                //Console.WriteLine("nbNeighborPerStep : " + nbNeighborPerStep);
             }
 
             for (int i = 0; i < maxSteps; i++)
@@ -70,41 +70,43 @@ namespace Metaheuristic.Recuit
                     Console.WriteLine("Step #" + (i + 1));
                 }
 
-                //Try X neighbors at that temperature
-                for (int j = 0; j < nbNeighborPerStep; j++)
+                //Randomly get a neighbor
+                QuadraticAssignmentSolution neighbor = current.GetRandomNeighbor();
+
+                //Check if better than CURRENT solution
+                int neighborFitness = qap.Evaluate(neighbor);
+                int diffFitness = neighborFitness - minFitness;
+
+                //If it's better, we keep it
+                if (diffFitness <= 0)
                 {
+                    current = neighbor;
 
-                    //Randomly get a neighbor
-                    QuadraticAssignmentSolution neighbor = current.GetRandomNeighbor();
+                    //If it's better than ALL solution
+                    if (neighborFitness < minFitness)
+                    {
+                        best = neighbor;
+                        minFitness = neighborFitness;
+                    }
+                    stagnantCount = 0;
+                }
+                else
+                {
+                    //There's a random chance to keep it anyway
+                    double p = rnd.NextDouble(); //rand in [0,1[
 
-                    //Check if better than CURRENT solution
-                    int neighborFitness = qap.Evaluate(neighbor);
-                    int diffFitness = neighborFitness - minFitness;
-
-                    //If it's better, we keep it
-                    if (diffFitness <= 0)
+                    //I haven't chose that formula
+                    if (p <= Math.Exp(-diffFitness / temperature))
                     {
                         current = neighbor;
 
-                        //If it's better than ALL solution
-                        if (neighborFitness < minFitness)
-                        {
-                            best = neighbor;
-                            minFitness = neighborFitness;
-                        }
+                        stagnantCount = 0;
                     }
                     else
                     {
-                        //There's a random chance to keep it anyway
-                        double p = rnd.NextDouble(); //rand in [0,1[
-
-                        //I haven't chose that formula
-                        if (p <= Math.Exp(-diffFitness / temperature))
-                        {
-                            current = neighbor;
-                        }
-
+                        stagnantCount++;
                     }
+                        
                 }
 
                 //Temperature decrease
@@ -113,10 +115,10 @@ namespace Metaheuristic.Recuit
                 logs.AddStep(current, best, temperature);
 
                 //Additional terminal condition : If Temperature is extremely cold
-                if (temperature < 1d)
+                if (temperature < 1d || stagnantCount >= 40)
                 {
                     if (Verbose)
-                        Console.WriteLine("Temperature is very low ! Algorithm has been stopped early. Step = " + i);
+                        Console.WriteLine("Temperature/Changes is very low ! Algorithm has been stopped early. Step = " + i);
                     break;
                 }
             }
@@ -139,8 +141,7 @@ namespace Metaheuristic.Recuit
             return Execute(parameters.InitialSol,
                         parameters.InitialTemp,
                         parameters.TemperatureDecrease,
-                        parameters.MaxSteps,
-                        parameters.NbNeighborPerStep);
+                        parameters.MaxSteps);
         }
     }
 

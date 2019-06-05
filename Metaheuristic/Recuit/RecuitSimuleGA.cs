@@ -50,10 +50,7 @@ namespace Metaheuristic.Recuit
 
             flip = rand.Next(0, 2);
             childs[flip].MaxSteps = parent2.MaxSteps;
-
-            flip = rand.Next(0, 2);
-            childs[flip].NbNeighborPerStep = parent2.NbNeighborPerStep;
-
+            
             return childs;
 
         }
@@ -74,7 +71,7 @@ namespace Metaheuristic.Recuit
         {
 
             //We choose a random parameter to reset mutate
-            int choice = rand.Next(0, 5);
+            int choice = rand.Next(0, 4);
             switch (choice) {
                 case 0:
                     child.InitialSol = child.GetRandomInitialSol(problem.N);
@@ -87,9 +84,6 @@ namespace Metaheuristic.Recuit
                     break;
                 case 3:
                     child.MaxSteps = child.GetRandomMaxStep();
-                    break;
-                case 4:
-                    child.NbNeighborPerStep = child.GetRandomNeighborStep();
                     break;
             }
 
