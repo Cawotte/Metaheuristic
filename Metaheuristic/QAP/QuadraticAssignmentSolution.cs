@@ -124,6 +124,30 @@ namespace Metaheuristic.QAP
 
         }
 
+        public QuadraticAssignmentSolution(int n, Random rnd)
+        {
+            //RANDOM SOLUTION OF S
+
+            this.rand = rnd;
+            this.n = n;
+            solution = new int[n];
+
+            //Fill the array with numbers from 1 to N.
+            for (int i = 0; i < n; i++)
+            {
+                solution[i] = i + 1;
+            }
+
+            //Shuffle it.
+            Tuple<int, int>[] inversions = QuadraticAssignment.GetInversions(n);
+
+            for (int i = 0; i < n; i++)
+            {
+                ApplyInversion(inversions[rnd.Next(0, inversions.Length)]);
+            }
+
+        }
+
         /// <summary>
         /// Clone the solution
         /// </summary>

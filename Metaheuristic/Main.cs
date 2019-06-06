@@ -203,6 +203,76 @@ namespace Metaheuristic
                         System.IO.File.WriteAllText(fullNameAllRec, allText);
 
                         break;
+                    case "allga":
+                    case "allg":
+                        allNames = GetAllInstances();
+                        interrupted = false;
+
+                        algo = Algo.GA;
+                        GeneticAlgorithmParameters paramGA = GetParamGA(out interrupted);
+                        allText = paramGA.ToString();
+
+                        if (interrupted)
+                        {
+                            break;
+                        }
+
+                        foreach (string instanceName in allNames)
+                        {
+                            ChangeInstance(instanceName);
+                            GeneticAlgorithmQAP geneticAlgo = new GeneticAlgorithmQAP(qap);
+                            //paramGA. = new QuadraticAssignmentSolution(qap.N);
+                            RunGeneticAlgorithm<QuadraticAssignmentSolution>(geneticAlgo, false, paramGA);
+
+                            allText += "\n\n" + instanceName + ":\n";
+                            allText += "Resultats:\n" + resultString + ComparisonWithBest();
+                            allText += "\n----";
+                        }
+
+                        allText = allText.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                        string fullNameAllGA = Path.Combine(resultPath, "all_" + algo.GetString() + "_s" + seed + ".txt");
+                        System.IO.File.WriteAllText(fullNameAllGA, allText);
+
+                        break;
+                    case "autoga":
+
+                        string instanceCurrent = "tai12a";
+                        ChangeInstance(instanceCurrent);
+
+                        algo = Algo.GA;
+                        List<GeneticAlgorithmParameters> paramsGa = new List<GeneticAlgorithmParameters>();
+
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(300, 25, 0.005, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 50, 0.005, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.1, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 5, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 20, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 0, 20));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 0, 50));
+
+
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 2, 20));
+
+                        GeneticAlgorithmQAP geneticAlgoAll = new GeneticAlgorithmQAP(qap);
+                        allText = instanceCurrent + "\n";
+                        
+
+                        foreach (GeneticAlgorithmParameters parGA in paramsGa)
+                        {
+                            
+                            RunGeneticAlgorithm<QuadraticAssignmentSolution>(geneticAlgoAll, false, parGA);
+                            
+                            allText += parGA.ToString();
+                            allText += "\nResultats:\n" + resultString + ComparisonWithBest();
+                            allText += "\n----";
+                        }
+
+                        allText = allText.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                        string fulenamega = Path.Combine(resultPath, "all_" + algo.GetString() + "_s" + seed + ".txt");
+                        System.IO.File.WriteAllText(fulenamega, allText);
+
+                        break;
                     default:
                         Console.WriteLine("\nCommande invalide!");
                         break;
@@ -272,7 +342,7 @@ namespace Metaheuristic
 
         private static TabouParameters GetParamTabou(out bool interrupted)
         {
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N, RandomSingleton.Instance.GetNewSeededRandom());
             int sizeTabou = -1;
             int steps = -1;
 
@@ -299,7 +369,7 @@ namespace Metaheuristic
 
         private static RecuitSimuleParameters GetParamRecuit(out bool interrupted)
         {
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N, RandomSingleton.Instance.GetNewSeededRandom());
             double initialTemp = -1d;
             double temperatureDecrease = -1d;
             int maxSteps = -1;
@@ -330,6 +400,60 @@ namespace Metaheuristic
 
             interrupted = false;
             return new RecuitSimuleParameters(initialSol, initialTemp, temperatureDecrease, maxSteps);
+        }
+
+        private static GeneticAlgorithmParameters GetParamGA(out bool interrupted)
+        {
+            int populationSize = -1;
+            int steps = -1;
+            double mutationChance = 0.05;
+            int elitism = -1;
+            int newBlood = -1;
+
+
+            Console.WriteLine("Veuillez entrez les paramètres de l'Algorithme Génétique : ");
+
+
+            Console.WriteLine("Taille de la population (entier > 0) :");
+            if (!GetCorrectInt(out populationSize, (val) => val >= 0))
+            {
+                interrupted = true;
+                return null;
+            }
+
+            Console.WriteLine("Nombre de générations de l'exécution (entier > 0) : ");
+            if (!GetCorrectInt(out steps, (val) => val > 0))
+            {
+                interrupted = true;
+                return null;
+            }
+
+            Console.WriteLine("Chance de mutation (réel de [0,1[ très faible, de l'ordre de .005) : ");
+            if (!GetCorrectDouble(out mutationChance, (val) => val >= 0 && val < 1d))
+            {
+                interrupted = true;
+                return null;
+            }
+
+
+            Console.WriteLine("Elitisme, nombre de meilleurs individus conservés par génération, prenez une valeur faible (>= 0, < population) : ");
+            if (!GetCorrectInt(out elitism, (val) => val >= 0d && val < populationSize))
+            {
+                interrupted = true;
+                return null;
+            }
+
+
+            Console.WriteLine("New Blood, nombre de nouveaux individus entièrement aléatoire ré-introduit à chaque génération (>= 0, < population) : ");
+            if (!GetCorrectInt(out newBlood, (val) => val >= 0 && val < (populationSize - elitism)))
+            {
+                interrupted = true;
+                return null;
+            }
+
+            interrupted = false;
+            return new GeneticAlgorithmParameters(populationSize, steps, mutationChance, elitism, newBlood);
+
         }
 
         #endregion
@@ -469,67 +593,35 @@ namespace Metaheuristic
             return true;
         }
 
-        private static bool RunGeneticAlgorithm<T>(AbstractGeneticAlgorithm<T> algo) where T : IChromosome {
+        private static bool RunGeneticAlgorithm<T>(AbstractGeneticAlgorithm<T> algo, 
+                                                    bool verbose = true, 
+                                                    GeneticAlgorithmParameters param = null) where T : IChromosome {
             
 
-            int populationSize = -1;
-            int steps = -1;
-            double mutationChance = 0.05;
-            int elitism = -1;
-            int newBlood = -1;
-
-
-            Console.WriteLine("Veuillez entrez les paramètres de l'Algorithme Génétique : ");
-
-
-            Console.WriteLine("Taille de la population (entier > 0) :");
-            if (!GetCorrectInt(out populationSize, (val) => val >= 0))
+            bool interrupted = false;
+            if (verbose)
             {
-                return false;
-            }
 
-            Console.WriteLine("Nombre de générations de l'exécution (entier > 0) : ");
-            if (!GetCorrectInt(out steps, (val) => val > 0))
-            {
-                return false;
-            }
+                param = GetParamGA(out interrupted);
+                if (interrupted)
+                {
+                    return false;
+                }
+                
+                //param = new RecuitSimuleParameters(qap.N);
+                Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
+                Console.WriteLine(param.ToString());
 
-            Console.WriteLine("Chance de mutation (réel de [0,1[ très faible, de l'ordre de .005) : ");
-            if (!GetCorrectDouble(out mutationChance, (val) => val >= 0 && val < 1d))
-            {
-                return false;
-            }
+                string str = "";
+                if (!GetCorrectString(out str, (s) => IsValidation(s)))
+                {
+                    return false;
+                }
 
-
-            Console.WriteLine("Elitisme, nombre de meilleurs individus conservés par génération, prenez une valeur faible (>= 0, < population) : ");
-            if (!GetCorrectInt(out elitism, (val) => val >= 0d && val < populationSize))
-            {
-                return false;
-            }
-
-
-            Console.WriteLine("New Blood, nombre de nouveaux individus entièrement aléatoire ré-introduit à chaque génération (>= 0, < population) : ");
-            if (!GetCorrectInt(out newBlood, (val) => val >= 0 && val < (populationSize - elitism) ))
-            {
-                return false;
-            }
-
-
-            GeneticAlgorithmParameters param = new GeneticAlgorithmParameters(populationSize, steps, mutationChance, elitism, newBlood);
-
-            //param = new RecuitSimuleParameters(qap.N);
-            Console.WriteLine("Tout les paramètres sont entrées, commencer l'exécution ? ( o/n, y/n )");
-            Console.WriteLine(param.ToString());
-
-            string str = "";
-            if (!GetCorrectString(out str, (s) => IsValidation(s)))
-            {
-                return false;
-            }
-
-            if (!IsYes(str))
-            {
-                return false;
+                if (!IsYes(str))
+                {
+                    return false;
+                }
             }
 
             //Lancer l'exécution
@@ -554,11 +646,14 @@ namespace Metaheuristic
 
             //Save Logs
             algo.Logs.SaveLogsTo(GetCSVPath());
-            Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!");
+            Console.WriteLine("Logs sauvegardées dans " + GetCSVPath() + "!\n");
 
-            Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
-            Console.ReadKey();
-            Console.WriteLine();
+            if (verbose)
+            {
+                Console.WriteLine("\nAppuyez sur une touche pour revenir au menu.");
+                Console.ReadKey();
+                Console.WriteLine();
+            }
             return true;
         }
 
@@ -754,6 +849,7 @@ namespace Metaheuristic
 
             str += "\tEntrez 'allr' ou 'allrec' pour lancer le Recuit pour TOUTES les instances avec les mêmes paramètres\n";
             str += "\tEntrez 'allt' ou 'alltabou' pour lancer le Tabou pour TOUTES les instances avec les mêmes paramètres\n";
+            str += "\tEntrez 'allg' ou 'allga' pour lancer le GA pour TOUTES les instances avec les mêmes paramètres\n";
 
             str += "\n\tEntrez 'x' ou 'e' ou 'exit' pour retourner au menu n'importe quand\n";
             str += "\tEntrez 'q' ou 'quit' pour quitter\n";

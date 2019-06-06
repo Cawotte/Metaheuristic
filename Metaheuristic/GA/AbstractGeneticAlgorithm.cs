@@ -29,6 +29,7 @@ namespace Metaheuristic.GA
         
         protected Random rand = RandomSingleton.Instance.GetNewSeededRandom();
 
+        protected T best;
 
         //Calculations
         protected T[] population;
@@ -102,7 +103,7 @@ namespace Metaheuristic.GA
             if (WithLogs)
             {
                 logs = new GALogs<T>();
-                logs.AddStep(population);
+                logs.AddStep(population, best);
                 if ( Verbose )
                     Console.WriteLine(logs.Last.ToString());
             }
@@ -156,7 +157,7 @@ namespace Metaheuristic.GA
 
                 if (WithLogs)
                 {
-                    logs.AddStep(population);
+                    logs.AddStep(population, best);
                     if (Verbose)
                         Console.WriteLine(logs.Last.ToString());
                 }
@@ -172,7 +173,7 @@ namespace Metaheuristic.GA
             }
             stopWatch.Stop();
 
-            return BestIndividual;
+            return best;
             /***
              * initialize population
                 find fitness of population
@@ -216,18 +217,24 @@ namespace Metaheuristic.GA
             //If it's the first gen, we compute all Fitness. Else we skip the elites ones we already know.
             int startIndex = isFirstGen ? 0 : elitism;
 
-            int sumFitnesses = 0;
+            //long sumFitnesses = 0;
             for (int i = startIndex; i < populationSize; i++)
             {
                 population[i].Fitness = GetFitness(population[i]);
-                sumFitnesses += population[i].Fitness;
+                //sumFitnesses += population[i].Fitness;
             }
 
             //Sort by Score (Thanks LINQ)
             population = population.OrderBy(individual => individual.Fitness).ToArray();
 
-            //sumFitnesses = population.Sum(individual => individual.Fitness);
-            //Make it return best score?
+
+            if (isFirstGen) best = BestIndividual;
+
+            //New general best ?
+            if (BestIndividual.Fitness < best.Fitness)
+            {
+                best = BestIndividual;
+            }
             
 
             if (Verbose)
