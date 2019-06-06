@@ -37,14 +37,14 @@ namespace Metaheuristic.GA
             get => logs.Count;
         }
 
-        public void AddStep(T[] population)
+        public void AddStep(T[] population, T best)
         {
             LogStep<T> step = new LogStep<T>();
 
             step.Step = logs.Count;
 
             //Diversity and AverageFitness
-            int average = 0;
+            long average = 0;
             HashSet<int> uniqueFitnesses = new HashSet<int>(); //Two different invidivuals are two indivivuals with different fitnesses (not really true)
 
             for (int i = 0; i < population.Length; i++)
@@ -53,14 +53,14 @@ namespace Metaheuristic.GA
                 uniqueFitnesses.Add(population[i].Fitness);
             }
 
-            average = (int)((double)average / (double)population.Length);
-            step.AverageFitness = average;
+            average = (long)((double)average / (double)population.Length);
+            step.AverageFitness = (int)average;
 
             step.Diversity = Math.Round(((double)uniqueFitnesses.Count / (double)population.Length) * 100d, 2);
 
-            step.Best = population[0];
-            step.BestFitness = population[0].Fitness;
-            step.BestString = population[0].ToString();
+            step.Best = best;
+            step.BestFitness = best.Fitness;
+            step.BestString = best.ToString();
 
             //Improvement
             //If it's the first step, we init it.

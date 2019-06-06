@@ -811,6 +811,7 @@ namespace Metaheuristic
 
             str += "\tEntrez 'allr' ou 'allrec' pour lancer le Recuit pour TOUTES les instances avec les mêmes paramètres\n";
             str += "\tEntrez 'allt' ou 'alltabou' pour lancer le Tabou pour TOUTES les instances avec les mêmes paramètres\n";
+            str += "\tEntrez 'allg' ou 'allga' pour lancer le GA pour TOUTES les instances avec les mêmes paramètres\n";
 
             str += "\n\tEntrez 'x' ou 'e' ou 'exit' pour retourner au menu n'importe quand\n";
             str += "\tEntrez 'q' ou 'quit' pour quitter\n";
