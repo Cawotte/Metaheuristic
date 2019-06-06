@@ -1,0 +1,18 @@
+Algorithme Génétique
+Parametres :
+
+ Population Size : 20
+ Number of Generations : 100
+ Mutation Chance : 0,005
+ Elitism : 2
+ New Blood : 5
+
+
+Resultats:
+
+Best Solution : {6,2,7,4,5,8,1,12,11,10,9,3}
+Best Fitness : 259154
+Average GA Fitness : 275568
+Average Diversity : 38,02%
+Average Improvement : 0,1427%
+Improvement between initial and best : 8,1079%
