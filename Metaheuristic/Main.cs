@@ -234,7 +234,45 @@ namespace Metaheuristic
                         System.IO.File.WriteAllText(fullNameAllGA, allText);
 
                         break;
+                    case "autoga":
 
+                        string instanceCurrent = "tai12a";
+                        ChangeInstance(instanceCurrent);
+
+                        algo = Algo.GA;
+                        List<GeneticAlgorithmParameters> paramsGa = new List<GeneticAlgorithmParameters>();
+
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(300, 25, 0.005, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 50, 0.005, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.1, 0, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 5, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 20, 0));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 0, 20));
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 0, 50));
+
+
+                        paramsGa.Add(new GeneticAlgorithmParameters(100, 25, 0.005, 2, 20));
+
+                        GeneticAlgorithmQAP geneticAlgoAll = new GeneticAlgorithmQAP(qap);
+                        allText = instanceCurrent + "\n";
+                        
+
+                        foreach (GeneticAlgorithmParameters parGA in paramsGa)
+                        {
+                            
+                            RunGeneticAlgorithm<QuadraticAssignmentSolution>(geneticAlgoAll, false, parGA);
+                            
+                            allText += parGA.ToString();
+                            allText += "\nResultats:\n" + resultString + ComparisonWithBest();
+                            allText += "\n----";
+                        }
+
+                        allText = allText.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
+                        string fulenamega = Path.Combine(resultPath, "all_" + algo.GetString() + "_s" + seed + ".txt");
+                        System.IO.File.WriteAllText(fulenamega, allText);
+
+                        break;
                     default:
                         Console.WriteLine("\nCommande invalide!");
                         break;
@@ -304,7 +342,7 @@ namespace Metaheuristic
 
         private static TabouParameters GetParamTabou(out bool interrupted)
         {
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N, RandomSingleton.Instance.GetNewSeededRandom());
             int sizeTabou = -1;
             int steps = -1;
 
@@ -331,7 +369,7 @@ namespace Metaheuristic
 
         private static RecuitSimuleParameters GetParamRecuit(out bool interrupted)
         {
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N, RandomSingleton.Instance.GetNewSeededRandom());
             double initialTemp = -1d;
             double temperatureDecrease = -1d;
             int maxSteps = -1;
