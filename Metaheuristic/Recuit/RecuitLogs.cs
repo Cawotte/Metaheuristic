@@ -83,7 +83,7 @@ namespace Metaheuristic.Recuit
             logs.Add(step);
         }
 
-        public void AddFinalLog()
+        public void AddFinalLog(double timeEllasped)
         {
             LastLogRecuit final = new LastLogRecuit();
 
@@ -106,6 +106,8 @@ namespace Metaheuristic.Recuit
             }
 
             final.ImprovementChart = ToStringImprovements();
+
+            final.timeEllapsed = timeEllasped;
 
 
             //save it
@@ -221,6 +223,8 @@ namespace Metaheuristic.Recuit
 
             public string ImprovementChart;
 
+            public double timeEllapsed;
+
             public override string ToString()
             {
                 string str = "";
@@ -230,6 +234,7 @@ namespace Metaheuristic.Recuit
                 str += "\nBest Solution : " + Best.ToString();
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nTotal Improvement : " + BestImprovement + "%";
+                str += "\nExecution Time : " + timeEllapsed + "ms";
 
 
                 str += "\n";

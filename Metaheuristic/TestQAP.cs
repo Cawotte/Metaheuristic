@@ -105,7 +105,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution best;
             
             RecuitSimule recuit = new RecuitSimule(qap);
-            best = recuit.Execute(initialSol, 70000, 0.85f, 200, 5);
+            best = recuit.Execute(initialSol, 70000, 0.85f, 200);
 
             Console.WriteLine(recuit.Logs.FinalLog.ToString());
             Console.WriteLine(recuit.Logs.ToStringImprovements());

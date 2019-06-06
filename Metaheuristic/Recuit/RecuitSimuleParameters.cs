@@ -21,7 +21,6 @@ namespace Metaheuristic.Recuit
         public double InitialTemp;
         public double TemperatureDecrease;
         public int MaxSteps;
-        public int NbNeighborPerStep;
 
         //Others
 
@@ -34,14 +33,12 @@ namespace Metaheuristic.Recuit
         public RecuitSimuleParameters(QuadraticAssignmentSolution initialSol,
                                                     double initialTemp,
                                                     double temperatureDecrease,
-                                                    int maxSteps,
-                                                    int nbNeighborPerStep)
+                                                    int maxSteps)
         {
             this.InitialSol = initialSol;
             this.InitialTemp = initialTemp;
             this.TemperatureDecrease = temperatureDecrease;
             this.MaxSteps = maxSteps;
-            this.NbNeighborPerStep = nbNeighborPerStep;
             
         }
 
@@ -55,7 +52,6 @@ namespace Metaheuristic.Recuit
             this.InitialTemp = param.InitialTemp;
             this.TemperatureDecrease = param.TemperatureDecrease;
             this.MaxSteps = param.MaxSteps;
-            this.NbNeighborPerStep = param.NbNeighborPerStep;
             
         }
 
@@ -70,7 +66,6 @@ namespace Metaheuristic.Recuit
             this.InitialTemp = GetRandomInitialTemp();
             this.TemperatureDecrease = GetRandomTemperatureDecrease();
             this.MaxSteps = GetRandomMaxStep();
-            this.NbNeighborPerStep = GetRandomNeighborStep();
         }
 
 
@@ -111,7 +106,6 @@ namespace Metaheuristic.Recuit
             str += "\nT0 : " + String.Format("{0:0.00}", InitialTemp);
             str += "\nTemp_Decrease : " + String.Format("{0:0.00}", TemperatureDecrease);
             str += "\nMaxSteps : " + MaxSteps;
-            str += "\nNeighbors per Step : " + NbNeighborPerStep;
             str += "\n";
 
             return str;

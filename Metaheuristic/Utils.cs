@@ -4,6 +4,7 @@ namespace Metaheuristic
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
 
@@ -41,13 +42,17 @@ namespace Metaheuristic
             return true;
         }
 
-        public static void Shuffle<T>(T[] array)
+        public static IEnumerable<T> Shuffle<T>(IEnumerable<T> source)
         {
             //Quick and poor shuffler, it can be faster + should be able to use a seed.
             ///TODO : Rework shuffler into something better
 
-            Random rand = new Random();
+            Random rand = RandomSingleton.Instance.Rand;
 
+
+            return source.OrderBy<T, int>((item) => rand.Next());
+
+            /*
             //Randomly swap spots.
             for (int i = 0; i < array.Length - 1; i++)
             {
@@ -55,7 +60,7 @@ namespace Metaheuristic
                 T temp = array[i];
                 array[i] = array[j];
                 array[j] = temp;
-            }
+            } */
         }
         /// <summary>
         /// Parse the string to return an array with all integers from the string.
