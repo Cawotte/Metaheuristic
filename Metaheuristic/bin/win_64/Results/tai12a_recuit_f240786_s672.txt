@@ -1,0 +1,18 @@
+Recuit Simule
+Parametres :
+
+N : 12
+S0 : {2,1,11,12,4,7,3,8,6,10,5,9}
+T0 : 1000,00
+Temp_Decrease : 0,89
+MaxSteps : 1000
+Neighbors per Step : 10
+
+
+Resultats:
+
+Final Temperature: 0,0893718054794541
+Nb Worse Picks : 0
+Best Solution : {8,2,6,10,5,7,1,12,4,11,9,3}
+Best Fitness : 240786
+Total Improvement : 22,5141%
