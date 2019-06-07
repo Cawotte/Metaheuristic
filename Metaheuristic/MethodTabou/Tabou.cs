@@ -50,12 +50,15 @@ namespace Metaheuristic.MethodeTabou
             forbiddenMoves = new Queue<Tuple<int, int>>();
             this.sizeTabou = sizeTabou;
 
+            bool newBest = true;
+            bool currentHasImproved = false;
             logs = new TabouLogs();
 
             QuadraticAssignmentSolution best = initialSol;
             initialSol.Fitness = problem.Evaluate(initialSol);
 
             QuadraticAssignmentSolution current = initialSol;
+            QuadraticAssignmentSolution solution = current;
 
             //Add step 0
             logs.AddStep(current, best, forbiddenMoves.Count);
@@ -66,11 +69,25 @@ namespace Metaheuristic.MethodeTabou
                 if (Verbose)
                 {
                     Console.WriteLine("Step #" + (i+1));
-                    Console.WriteLine("Current Fitness : " + current.Fitness);
+                    Console.WriteLine("   Current Fitness : " + current.Fitness);
+                    if (currentHasImproved)
+                    {
+                        Console.WriteLine("   Current has improved");
+                    }
+                    if (newBest)
+                    {
+                        if (Verbose)
+                        {
+                            Console.WriteLine("   New Best !");
+                        }
+                    }
+
+                    newBest = false;
+                    currentHasImproved = false;
                 }
 
                 //At each iteration we choose the best neighbord
-                QuadraticAssignmentSolution solution = GetBestInNeighborhood(current);
+                solution = GetBestInNeighborhood(current);
 
                 solution.Fitness = problem.Evaluate(solution);
 
@@ -78,26 +95,16 @@ namespace Metaheuristic.MethodeTabou
                 if (solution.Fitness < best.Fitness)
                 {
                     best = solution;
+                    newBest = true; //for verbose
 
-                    if (Verbose)
-                    {
-                        Console.WriteLine("New Best : " + best.Fitness);
-                    }
+
                 }
                 else
                 {
                     AddInterdiction(GetDifference(current, solution));
                 }
 
-
-                if (Verbose)
-                {
-                    if (solution.Fitness < current.Fitness)
-                    {
-                        Console.WriteLine("Current has improved");
-                        Console.WriteLine();
-                    }
-                }
+                currentHasImproved = Verbose && solution.Fitness < current.Fitness; //for verbose
 
                 current = solution;
                 
