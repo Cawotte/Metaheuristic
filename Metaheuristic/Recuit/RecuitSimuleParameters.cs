@@ -14,7 +14,7 @@ namespace Metaheuristic.Recuit
     public class RecuitSimuleParameters : IChromosome
     {
 
-        private Random rand = RandomSingleton.Instance.GetNewSeededRandom();
+        private Random rand = RandomSingleton.Instance.CurrentAlgoRand;
 
         //Parameters
         public QuadraticAssignmentSolution InitialSol;

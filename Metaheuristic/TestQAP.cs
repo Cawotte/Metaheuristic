@@ -54,7 +54,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
 
 
-            AbstactGeneticAlgorithm tabou = new AbstactGeneticAlgorithm(qap);
+            MethodeTabou.MethodTabou tabou = new MethodeTabou.MethodTabou(qap);
             tabou.Verbose = true;
 
             QuadraticAssignmentSolution best = tabou.Run(

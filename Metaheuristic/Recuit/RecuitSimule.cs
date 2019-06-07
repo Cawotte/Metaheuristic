@@ -13,8 +13,8 @@ namespace Metaheuristic.Recuit
 
         public bool Verbose = true;
         private QuadraticAssignment qap;
-        
-        private Random rnd = RandomSingleton.Instance.GetNewSeededRandom();
+
+        private Random rnd = RandomSingleton.Instance.CurrentAlgoRand;
 
         private RecuitLogs logs;
 
@@ -34,6 +34,7 @@ namespace Metaheuristic.Recuit
                                                     double temperatureDecrease, 
                                                     int maxSteps)
         {
+            rnd = RandomSingleton.Instance.CurrentAlgoRand;
             Stopwatch stopWatch = Stopwatch.StartNew();
             
             //setup

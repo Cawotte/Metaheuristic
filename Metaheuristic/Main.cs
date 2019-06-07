@@ -62,6 +62,8 @@ namespace Metaheuristic
 
                 line = GetLine();
 
+                RandomSingleton.Instance.ResetCurrentAlgoRandom();
+
                 switch (line[0].ToLower()) {
                     case "q":
                     case "quit":
@@ -342,7 +344,7 @@ namespace Metaheuristic
 
         private static TabouParameters GetParamTabou(out bool interrupted)
         {
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N, RandomSingleton.Instance.GetNewSeededRandom());
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
             int sizeTabou = -1;
             int steps = -1;
 
@@ -369,7 +371,7 @@ namespace Metaheuristic
 
         private static RecuitSimuleParameters GetParamRecuit(out bool interrupted)
         {
-            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N, RandomSingleton.Instance.GetNewSeededRandom());
+            QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
             double initialTemp = -1d;
             double temperatureDecrease = -1d;
             int maxSteps = -1;
@@ -557,10 +559,10 @@ namespace Metaheuristic
                     return false;
                 }
             }
-            
+
 
             //Lancer l'exécution
-            AbstactGeneticAlgorithm tabou = new AbstactGeneticAlgorithm(qap);
+            MethodeTabou.MethodTabou tabou = new MethodeTabou.MethodTabou(qap);
 
             tabou.Verbose = true;
 

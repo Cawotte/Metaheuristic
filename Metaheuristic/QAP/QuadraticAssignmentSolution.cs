@@ -22,7 +22,7 @@ namespace Metaheuristic.QAP
         
         private int fitness;
 
-        private Random rand = RandomSingleton.Instance.Rand;
+        private Random rand = RandomSingleton.Instance.CurrentAlgoRand;
         #endregion
 
         #region Properties
@@ -124,6 +124,7 @@ namespace Metaheuristic.QAP
 
         }
 
+        /*
         public QuadraticAssignmentSolution(int n, Random rnd)
         {
             //RANDOM SOLUTION OF S
@@ -146,7 +147,7 @@ namespace Metaheuristic.QAP
                 ApplyInversion(inversions[rnd.Next(0, inversions.Length)]);
             }
 
-        }
+        }*/
 
         /// <summary>
         /// Clone the solution

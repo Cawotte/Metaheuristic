@@ -12,7 +12,7 @@ namespace Metaheuristic.MethodeTabou
     /**
      * Pick des voisins : Seulement prendre les voisins avec des emplacements à une distance X ou moins.
      * */
-    public class AbstactGeneticAlgorithm
+    public class MethodTabou
     {
         public bool Verbose = true;
 
@@ -25,7 +25,7 @@ namespace Metaheuristic.MethodeTabou
 
         public TabouLogs Logs { get => logs; }
 
-        public AbstactGeneticAlgorithm(QuadraticAssignment problem)
+        public MethodTabou(QuadraticAssignment problem)
         {
             this.problem = problem;
         }
@@ -43,7 +43,7 @@ namespace Metaheuristic.MethodeTabou
             int sizeTabou,
             int nbSteps)
         {
-
+            
             Stopwatch stopWatch = Stopwatch.StartNew();
 
             //Initialization

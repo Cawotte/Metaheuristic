@@ -26,8 +26,8 @@ namespace Metaheuristic.GA
         protected int elitism = 0;
         protected int newBlood = 0;
 
-        
-        protected Random rand = RandomSingleton.Instance.GetNewSeededRandom();
+
+        protected Random rand = RandomSingleton.Instance.CurrentAlgoRand;
 
         protected T best;
 
@@ -90,6 +90,7 @@ namespace Metaheuristic.GA
 
         public T Run()
         {
+            rand = RandomSingleton.Instance.CurrentAlgoRand;
 
             if (Verbose)
             {
