@@ -268,3 +268,5 @@ __pycache__/
 *.pyc
 /MetaheuristicTests/Properties/launchSettings.json
 /Metaheuristic/Properties/launchSettings.json
+
+Metaheuristic/bin/
