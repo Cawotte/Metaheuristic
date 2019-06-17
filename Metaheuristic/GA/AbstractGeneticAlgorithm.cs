@@ -170,7 +170,7 @@ namespace Metaheuristic.GA
             {
                 logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
                 if (Verbose)
-                    Console.WriteLine("#Final Log :" + logs.FinalLog.ToString());
+                    Console.WriteLine("#Final AbstractLog :" + logs.FinalLog.ToString());
             }
             stopWatch.Stop();
 

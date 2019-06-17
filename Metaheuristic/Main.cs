@@ -562,7 +562,7 @@ namespace Metaheuristic
 
 
             //Lancer l'exécution
-            MethodeTabou.MethodTabou tabou = new MethodeTabou.MethodTabou(qap);
+            MethodeTabou.Tabou tabou = new MethodeTabou.Tabou(qap);
 
             tabou.Verbose = true;
 

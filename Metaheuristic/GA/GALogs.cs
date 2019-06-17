@@ -10,38 +10,21 @@ namespace Metaheuristic.GA
     using CsvHelper;
     using CsvHelper.Configuration.Attributes;
     using System.IO;
+    using static Metaheuristic.AbstractLogs;
 
-    public class GALogs<T> where T : IChromosome
+    public class GALogs<T> : AbstractLogs where T : IChromosome
     {
-        private List<LogStep<T>> logs = new List<LogStep<T>>();
-        private FinalLogStep<T> finalLog;
 
         private static bool ExtendedLog = false; //Only set true for debugging
 
-        public LogStep<T> Last
-        {
-            get => logs[logs.Count - 1];
-        }
-
-        public LogStep<T> this[int index] {
-            get => logs[index];
-        }
-
-        public FinalLogStep<T> FinalLog
-        {
-            get => finalLog;
-        }
-
-        public int Size
-        {
-            get => logs.Count;
-        }
-
         public void AddStep(T[] population, T best)
         {
-            LogStep<T> step = new LogStep<T>();
+            LogGA<T> step = new LogGA<T>();
+            LogGA<T> previous = (LogGA<T>)Previous;
 
+            //General
             step.Step = logs.Count;
+            step.TimeEllapsed = stopWatch.ElapsedMilliseconds;
 
             //Diversity and AverageFitness
             long average = 0;
@@ -58,11 +41,12 @@ namespace Metaheuristic.GA
 
             step.Diversity = Math.Round(((double)uniqueFitnesses.Count / (double)population.Length) * 100d, 2);
 
+            //Best
             step.Best = best;
             step.BestFitness = best.Fitness;
             step.BestString = best.ToString();
 
-            //Improvement
+            //HasImproved
             //If it's the first step, we init it.
             if (logs.Count == 0)
             {
@@ -71,80 +55,66 @@ namespace Metaheuristic.GA
             }
             else
             {
-                step.Improvement = GetImprovement(Last.AverageFitness, step.AverageFitness);
-                step.BestImprovement = GetImprovement(Last.BestFitness, step.BestFitness);
+                step.Improvement = GetImprovement(previous.AverageFitness, step.AverageFitness);
+                step.BestImprovement = GetImprovement(previous.BestFitness, step.BestFitness);
             }
 
+            //Debug
             if (ExtendedLog)
             {
                 step.Population = population;
             }
+            
+
             //Add to logs
             logs.Add(step);
         }
 
-        public void AddFinalLog(double timeEllapsed)
+        public override void AddFinalLog()
         {
-            FinalLogStep<T> final = new FinalLogStep<T>();
+            FinalLogGA<T> final = new FinalLogGA<T>();
+            LogGA<T> last = (LogGA<T>)Previous;
 
             //Best Individual
-            final.BestFitness = Last.BestFitness; //logs.Max(step => step.BestFitness);
-            final.Best = Last.Best;
+            final.BestFitness = last.BestFitness; //logs.Max(step => step.BestFitness);
+            final.Best = last.Best;
 
-            //Improvement between first and best
-            final.BestImprovement = GetImprovement(logs[0].BestFitness, Last.BestFitness);
+            //HasImproved between first and best
+            final.BestImprovement = GetImprovement(logs[0].BestFitness, last.BestFitness);
 
             //Average improvement
-            final.AverageImprovement = Math.Round(logs.Average(step => step.Improvement), 4);
+            final.AverageImprovement = Math.Round(logs.Average(step => ((LogGA<T>)step).Improvement), 4);
 
             //Average Diversity
-            final.AverageDiversity = Math.Round(logs.Average(step => step.Diversity), 2);
+            final.AverageDiversity = Math.Round(logs.Average(step => ((LogGA<T>)step).Diversity), 2);
 
             //Average Fitness
-            final.AverageFitness = (int)logs.Average(step => step.AverageFitness);
+            final.AverageFitness = (int)logs.Average(step => ((LogGA<T>)step).AverageFitness);
 
 
-            final.timeEllapsed = timeEllapsed;
+            final.timeEllapsed = stopWatch.ElapsedMilliseconds;
+            stopWatch.Stop();
 
             //save it
             finalLog = final;
 
         }
+        
+        
 
-        public void SaveLogsTo(string path)
+        public class LogGA<T> : AbstractLog where T : IChromosome
         {
-            using (var writer = new StreamWriter(path))
-            using (var csv = new CsvWriter(writer))
-            {
-                csv.WriteRecords(logs);
-            }
-        }
 
-        private double GetImprovement(int lastFitness, int newFitness) {
-            return Math.Round( (1d - (double)newFitness / (double)lastFitness) * 100, 4);
-        }
-
-        public struct LogStep<T> where T : IChromosome
-        {
-            [Name("Step")]
-            public int Step { get; set; }
+            [Name("Improvement")]
+            public double Improvement { get; set; }
 
             [Name("Average Fitness")]
             public int AverageFitness { get; set; }
             [Name("Diversity")]
             public double Diversity { get; set; }
-            [Name("Improvement")]
-            public double Improvement { get; set; }
             
-            public T Best;
-
-            [Name("Best")]
-            public String BestString { get; set; }
-
-            [Name("Best Fitness")]
-            public int BestFitness { get; set; }
-            [Name("Best Improvement")]
-            public double BestImprovement { get; set; }
+            public new T Best;
+            
 
             //Used for debugging
             public T[] Population;
@@ -156,7 +126,7 @@ namespace Metaheuristic.GA
                 str += "\nDiversity : " + Diversity +"%";
                 str += "\nImprovement : " + Improvement + "%";
                 str += "\nBest Fitness : " + BestFitness;
-                str += "\nBest Improvement : " + BestImprovement + "%";
+                str += "\nBest HasImproved : " + BestImprovement + "%";
                 str += "\n";
 
                 return str;
@@ -164,19 +134,31 @@ namespace Metaheuristic.GA
             
         }
 
-        public struct FinalLogStep<T> where T : IChromosome
+        public class FinalLogGA<T> : AbstractFinalLog where T : IChromosome
         {
             public int AverageFitness;
             public double AverageDiversity;
             public double AverageImprovement;
 
-            public T Best;
-            public int BestFitness;
-            public double BestImprovement;
+            public new  T Best;
+            public override string ToString()
+            {
+                string str = "";
 
-            public double timeEllapsed;
+                str += BestToString();
 
+                //GA Infos
+                str += "\nAverage GA Fitness : " + AverageFitness;
+                str += "\nAverage Diversity : " + AverageDiversity + "%";
+                str += "\nAverage HasImproved : " + AverageImprovement + "%";
 
+                str += ImprovementToString();
+                str += "\nExecution Time : " + timeEllapsed + "ms";
+                str += "\n";
+
+                return str;
+            }
+            /*
             public override string ToString()
             {
                 string str = "";
@@ -184,13 +166,13 @@ namespace Metaheuristic.GA
                 str += "\nBest Fitness : " + BestFitness;
                 str += "\nAverage GA Fitness : " + AverageFitness;
                 str += "\nAverage Diversity : " + AverageDiversity + "%";
-                str += "\nAverage Improvement : " + AverageImprovement + "%";
+                str += "\nAverage HasImproved : " + AverageImprovement + "%";
                 str += "\nImprovement between initial and best : " + BestImprovement + "%";
                 str += "\nExecution Time : " + timeEllapsed + "ms";
                 str += "\n";
 
                 return str;
-            }
+            }*/
         }
     }
 

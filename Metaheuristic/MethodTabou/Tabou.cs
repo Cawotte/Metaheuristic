@@ -12,7 +12,7 @@ namespace Metaheuristic.MethodeTabou
     /**
      * Pick des voisins : Seulement prendre les voisins avec des emplacements à une distance X ou moins.
      * */
-    public class MethodTabou
+    public class Tabou : IQAPSolver
     {
         public bool Verbose = true;
 
@@ -25,7 +25,7 @@ namespace Metaheuristic.MethodeTabou
 
         public TabouLogs Logs { get => logs; }
 
-        public MethodTabou(QuadraticAssignment problem)
+        public Tabou(QuadraticAssignment problem)
         {
             this.problem = problem;
         }

@@ -54,7 +54,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution initialSol = new QuadraticAssignmentSolution(qap.N);
 
 
-            MethodeTabou.MethodTabou tabou = new MethodeTabou.MethodTabou(qap);
+            MethodeTabou.Tabou tabou = new MethodeTabou.Tabou(qap);
             tabou.Verbose = true;
 
             QuadraticAssignmentSolution best = tabou.Run(
