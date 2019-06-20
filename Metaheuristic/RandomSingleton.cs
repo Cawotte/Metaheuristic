@@ -8,7 +8,6 @@ namespace Metaheuristic
     {
         private int seed;
         private Random rand;
-        private Random currentAlgoRand;
 
         private static RandomSingleton _instance = null;
 
@@ -30,7 +29,6 @@ namespace Metaheuristic
             {
                 this.seed = value;
                 this.rand = new Random(value);
-                this.currentAlgoRand = new Random(value);
             }
         }
 
@@ -39,28 +37,16 @@ namespace Metaheuristic
             get => rand;
         }
 
-        public Random CurrentAlgoRand
-        {
-            get => currentAlgoRand;
-            set => currentAlgoRand = value;
-        }
-
         private RandomSingleton(int seed)
         {
             this.seed = seed;
             this.rand = new Random(seed);
-            this.currentAlgoRand = new Random(seed);
         }
-
-        public Random GetNewSeededRandom()
+        
+        public Random ResetRand()
         {
-            return new Random(seed);
-        }
-
-        public Random ResetCurrentAlgoRandom()
-        {
-            this.currentAlgoRand = new Random(seed);
-            return this.currentAlgoRand;
+            this.rand = new Random(seed);
+            return this.rand;
         }
 
 

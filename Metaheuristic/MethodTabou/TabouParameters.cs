@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Metaheuristic.MethodTabou
 {
-    public class TabouParameters
+    public class TabouParameters : SolverParameters, ISolverParameters
     {
 
         public QuadraticAssignmentSolution InitialSol;

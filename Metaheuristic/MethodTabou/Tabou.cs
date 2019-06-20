@@ -8,34 +8,55 @@ namespace Metaheuristic.MethodeTabou
     using System.Linq;
     using Metaheuristic.MethodTabou;
     using System.Diagnostics;
+    using Metaheuristic.Logs;
 
     /**
      * Pick des voisins : Seulement prendre les voisins avec des emplacements à une distance X ou moins.
      * */
     public class Tabou : IQAPSolver
     {
-        public bool Verbose = true;
-
-        private Queue<Tuple<int, int>> forbiddenMoves;
-        private int sizeTabou = 1;
-
+        //General
+        private bool verbose = true;
         private QuadraticAssignment problem;
 
         private TabouLogs logs;
 
-        public TabouLogs Logs { get => logs; }
+        //Tabou
+        private Queue<Tuple<int, int>> forbiddenMoves;
+        private int sizeTabou = 1;
 
+        //Properties
+        public ILogs Logs { get => logs; }
+        public bool Verbose { get => verbose; set => verbose = value; }
+
+        #region Constructors
         public Tabou(QuadraticAssignment problem)
         {
             this.problem = problem;
         }
+        #endregion
 
-
-        public QuadraticAssignmentSolution Run(TabouParameters param)
+        public void ResetRand()
         {
-            return Run(param.InitialSol,
-                       param.SizeTabou,
-                       param.NbSteps);
+            RandomSingleton.Instance.ResetRand();
+        }
+
+        public QuadraticAssignmentSolution Run(ISolverParameters param)
+        {
+            TabouParameters paramTab;
+
+            if (param is TabouParameters)
+            {
+                paramTab = (TabouParameters)param;
+            }
+            else
+            {
+                throw new BadTypeException();
+            }
+
+            return Run(paramTab.InitialSol,
+                       paramTab.SizeTabou,
+                       paramTab.NbSteps);
         }
 
         public QuadraticAssignmentSolution Run(
@@ -44,7 +65,6 @@ namespace Metaheuristic.MethodeTabou
             int nbSteps)
         {
             
-            Stopwatch stopWatch = Stopwatch.StartNew();
 
             //Initialization
             forbiddenMoves = new Queue<Tuple<int, int>>();
@@ -112,9 +132,7 @@ namespace Metaheuristic.MethodeTabou
 
             }
 
-            logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
-
-            stopWatch.Stop();
+            logs.AddFinalLog();
 
             return best;
         }

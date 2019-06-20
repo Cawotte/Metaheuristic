@@ -8,6 +8,7 @@ namespace Metaheuristic.Recuit
     using CsvHelper;
     using CsvHelper.Configuration.Attributes;
     using System.IO;
+    using Metaheuristic.Logs;
 
     public class RecuitLogs : AbstractLogsWithCurrent
     {

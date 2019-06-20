@@ -8,7 +8,7 @@ namespace Metaheuristic.GA
     using System.Text;
     using System.Linq;
 
-    public class GeneticAlgorithmQAP : AbstractGeneticAlgorithm<QuadraticAssignmentSolution>
+    public class GeneticAlgorithmQAP : AbstractGeneticAlgorithm<QuadraticAssignmentSolution>, IQAPSolver
     {
         #region Members
 
@@ -17,18 +17,7 @@ namespace Metaheuristic.GA
         private QuadraticAssignment problem;
 
         #endregion
-
-        public GeneticAlgorithmQAP(QuadraticAssignment problem,
-                                    int populationSize,
-                                    int maxSteps,
-                                    double mutationChance,
-                                    int elitism = 0,
-                                    int newBlood = 0) :
-            base(populationSize, maxSteps, mutationChance, elitism, newBlood) //Super constructor
-        {
-            this.problem = problem;
-            this.n = problem.N;
-        }
+        
 
         public GeneticAlgorithmQAP(QuadraticAssignment problem)
         {

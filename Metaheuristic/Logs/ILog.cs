@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Metaheuristic
+namespace Metaheuristic.Logs
 {
-    public interface IQAPSolver
+    public interface ILog
     {
+        string ToString();
     }
 }

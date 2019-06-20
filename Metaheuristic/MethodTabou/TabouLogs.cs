@@ -11,6 +11,7 @@ namespace Metaheuristic.MethodTabou
     using CsvHelper;
     using CsvHelper.Configuration.Attributes;
     using Metaheuristic.MethodeTabou;
+    using Metaheuristic.Logs;
 
     public class TabouLogs : AbstractLogsWithCurrent
     {
@@ -63,8 +64,8 @@ namespace Metaheuristic.MethodTabou
             public override string ToString()
             {
                 string str = "";
-                str += "\nAverage Tabou Size : " + AverageTabouSize;
                 str += base.ToString();
+                str += "\nAverage Tabou Size : " + AverageTabouSize;
 
                 return str;
             }

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Metaheuristic
+namespace Metaheuristic.Logs
 {
     public abstract class AbstractLogsWithCurrent : AbstractLogs
     {
@@ -65,10 +65,7 @@ namespace Metaheuristic
 
             public override string ToString()
             {
-                string str = "";
-                str += "\nStep #" + Step;
-
-                str += BestToString();
+                string str = base.ToString();
                 str += CurrentToString();
 
                 return str;

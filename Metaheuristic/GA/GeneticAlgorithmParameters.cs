@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Metaheuristic.QAP;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Metaheuristic.GA
 {
-    public class GeneticAlgorithmParameters
+    public class GeneticAlgorithmParameters : ISolverParameters
     {
         public int PopulationSize;
         public int MaxSteps;

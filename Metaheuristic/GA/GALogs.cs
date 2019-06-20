@@ -10,7 +10,7 @@ namespace Metaheuristic.GA
     using CsvHelper;
     using CsvHelper.Configuration.Attributes;
     using System.IO;
-    using static Metaheuristic.AbstractLogs;
+    using Metaheuristic.Logs;
 
     public class GALogs<T> : AbstractLogs where T : IChromosome
     {

@@ -8,26 +8,21 @@ namespace Metaheuristic.GA
     using System.Text;
     using System.Linq;
     using System.Diagnostics;
+    using Metaheuristic.Logs;
 
     public abstract class AbstractGeneticAlgorithm<T> where T : IChromosome
     {
-        public bool Verbose = true;
-        public bool WithLogs = true;
-
-
 
         #region Members
 
-        //Parameters
-        protected int populationSize;
-        protected double mutationChance = 0.05d;
-        protected int maxSteps;
+        private int populationSize;
+        private double mutationChance;
+        private int elitism = 0;
 
-        protected int elitism = 0;
-        protected int newBlood = 0;
+        private bool verbose = true;
+        private GALogs<T> logs;
 
-
-        protected Random rand = RandomSingleton.Instance.CurrentAlgoRand;
+        protected Random rand = RandomSingleton.Instance.Rand;
 
         protected T best;
 
@@ -35,85 +30,80 @@ namespace Metaheuristic.GA
         protected T[] population;
         protected int sumFitnesses;
         
-        private GALogs<T> logs;
 
         #endregion
 
         #region Properties
+
+
+        public ILogs Logs { get => logs; }
+
+        public bool Verbose { get => verbose; set => verbose = value; }
+
         protected T BestIndividual
         {
             get => population[0];
         }
-        public GALogs<T> Logs { get => logs; }
+
         #endregion
 
         //TODO : Ugly
         protected AbstractGeneticAlgorithm()
         {
         }
-
-        protected AbstractGeneticAlgorithm(
-                                    int populationSize,
-                                    int maxSteps,
-                                    double mutationChance,
-                                    int elitism = 0,
-                                    int newBlood = 0)
+        
+        public T Run(ISolverParameters param)
         {
-            this.populationSize = populationSize;
-            this.maxSteps = maxSteps;
-            this.mutationChance = mutationChance;
-            this.elitism = elitism;
-            this.newBlood = newBlood;
+            GeneticAlgorithmParameters paramGA;
 
-            if (elitism + newBlood >= populationSize)
+            if (param is GeneticAlgorithmParameters)
             {
-                throw new InvalidGAException("There can't be more elitism and new blood than population size!");
+                paramGA = (GeneticAlgorithmParameters)param;
             }
-            
-        }
+            else
+            {
+                throw new BadTypeException();
+            }
 
-        public T Run(GeneticAlgorithmParameters param)
-        {
-            this.populationSize = param.PopulationSize;
-            this.maxSteps = param.MaxSteps;
-            this.mutationChance = param.MutationChance;
-            this.elitism = param.Elitism;
-            this.newBlood = param.NewBlood;
-
-            if (elitism + newBlood >= populationSize)
+            if (paramGA.Elitism + paramGA.NewBlood >= paramGA.PopulationSize)
             {
                 throw new InvalidGAException("There can't be more elitism and new blood than population size!");
             }
 
-            return Run();
+            return Run(paramGA.PopulationSize,
+                        paramGA.MaxSteps,
+                        paramGA.MutationChance,
+                        paramGA.Elitism,
+                        paramGA.NewBlood);
         }
 
-        public T Run()
+        public T Run(
+                    int populationSize,
+                    int maxSteps,
+                    double mutationChance,
+                    int elitism = 0,
+                    int newBlood = 0)
         {
-            rand = RandomSingleton.Instance.CurrentAlgoRand;
+            rand = RandomSingleton.Instance.Rand;
 
-            if (Verbose)
+            if (verbose)
             {
                 Console.WriteLine("Generation #0...");
             }
-
-            Stopwatch stopWatch = Stopwatch.StartNew(); 
+            
             InitializePopulation();
             ComputePopulationFitnesses(true);
-
-            if (WithLogs)
-            {
-                logs = new GALogs<T>();
-                logs.AddStep(population, best);
-                if ( Verbose )
-                    Console.WriteLine(logs.Last.ToString());
-            }
+            
+            logs = new GALogs<T>();
+            logs.AddStep(population, best);
+            if ( verbose )
+                Console.WriteLine(logs.Previous.ToString());
 
             int step = 0;
             //While no termintation criteria
             while (step < maxSteps)
             {
-                if (Verbose)
+                if (verbose)
                 {
                     Console.WriteLine("Generation #" + (step+1));
                 }
@@ -155,24 +145,17 @@ namespace Metaheuristic.GA
 
                 //New Fitness
                 ComputePopulationFitnesses();
-
-                if (WithLogs)
-                {
-                    logs.AddStep(population, best);
-                    if (Verbose)
-                        Console.WriteLine(logs.Last.ToString());
-                }
+                
+                logs.AddStep(population, best);
+                if (verbose)
+                    Console.WriteLine(logs.Previous.ToString());
 
                 step++;
 
             }
-            if (WithLogs)
-            {
-                logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
-                if (Verbose)
-                    Console.WriteLine("#Final AbstractLog :" + logs.FinalLog.ToString());
-            }
-            stopWatch.Stop();
+            logs.AddFinalLog();
+            if (verbose)
+                Console.WriteLine("#Final AbstractLog :" + logs.FinalLog.ToString());
 
             return best;
             /***
@@ -238,7 +221,7 @@ namespace Metaheuristic.GA
             }
             
 
-            if (Verbose)
+            if (verbose)
             {
                 //PrintTopFitnesses(5);
             }

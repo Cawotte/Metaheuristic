@@ -255,7 +255,7 @@ namespace Metaheuristic.QAP
         {
             Tuple<int, int>[] inversions = GetInversions(n);
 
-            Random rand = RandomSingleton.Instance.CurrentAlgoRand;
+            Random rand = RandomSingleton.Instance.Rand;
 
             return inversions[rand.Next(0, inversions.Length)];
         }

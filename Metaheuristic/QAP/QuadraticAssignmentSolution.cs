@@ -22,7 +22,7 @@ namespace Metaheuristic.QAP
         
         private int fitness;
 
-        private Random rand = RandomSingleton.Instance.CurrentAlgoRand;
+        private Random rand = RandomSingleton.Instance.Rand;
         #endregion
 
         #region Properties

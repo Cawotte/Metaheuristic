@@ -62,7 +62,7 @@ namespace Metaheuristic
 
                 line = GetLine();
 
-                RandomSingleton.Instance.ResetCurrentAlgoRandom();
+                RandomSingleton.Instance.ResetRand();
 
                 switch (line[0].ToLower()) {
                     case "q":
@@ -139,7 +139,7 @@ namespace Metaheuristic
                     case "garec":
                         algo = Algo.RecuitGA;
                         RecuitSimule recuit = new RecuitSimule(qap);
-                        recuit.Verbose = false;
+                        recuit.verbose = false;
                         GeneticAlgorithmRecuit garec = new GeneticAlgorithmRecuit(recuit);
 
                         Console.WriteLine("Vous avez sélectionné l'Algorithme Génétique pour RECUIT SIMULE !");
@@ -496,9 +496,9 @@ namespace Metaheuristic
             //Lancer l'exécution
             RecuitSimule recuit = new RecuitSimule(qap);
 
-            recuit.Verbose = true;
+            recuit.verbose = true;
 
-            bestFitness = recuit.Execute(param).Fitness;
+            bestFitness = recuit.Run(param).Fitness;
 
             Console.WriteLine("Paramètres :");
             Console.WriteLine(param.ToString());
@@ -628,7 +628,7 @@ namespace Metaheuristic
 
             //Lancer l'exécution
 
-            algo.Verbose = true;
+            algo.verbose = true;
             algo.WithLogs = true;
 
             bestFitness = algo.Run(param).Fitness;

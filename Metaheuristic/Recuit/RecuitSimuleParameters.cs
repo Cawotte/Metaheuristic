@@ -11,10 +11,10 @@ namespace Metaheuristic.Recuit
     /// <summary>
     /// Encapsuled parameters for the Recuit Simulé algorithm. Useful for Genetic Algorithm.
     /// </summary>
-    public class RecuitSimuleParameters : IChromosome
+    public class RecuitSimuleParameters : IChromosome, ISolverParameters
     {
 
-        private Random rand = RandomSingleton.Instance.CurrentAlgoRand;
+        private Random rand = RandomSingleton.Instance.Rand;
 
         //Parameters
         public QuadraticAssignmentSolution InitialSol;

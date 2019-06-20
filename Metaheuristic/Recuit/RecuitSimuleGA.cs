@@ -24,7 +24,7 @@ namespace Metaheuristic.Recuit
             base(populationSize, maxSteps, mutationChance, elitism, newBlood) //Super constructor
         {
             this.problem = problem;
-            this.problem.Verbose = false;
+            this.problem.verbose = false;
         }
 
         protected override RecuitSimuleParameters[] Crossover(RecuitSimuleParameters parent1, RecuitSimuleParameters parent2)
@@ -64,7 +64,7 @@ namespace Metaheuristic.Recuit
         protected override int GetFitness(RecuitSimuleParameters solution)
         {
             //Return the fitness of the best solution from the algorithm executon
-            return problem.Execute(solution).Fitness;
+            return problem.Run(solution).Fitness;
         }
 
         protected override RecuitSimuleParameters Mutate(RecuitSimuleParameters child)

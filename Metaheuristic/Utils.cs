@@ -47,7 +47,7 @@ namespace Metaheuristic
             //Quick and poor shuffler, it can be faster + should be able to use a seed.
             ///TODO : Rework shuffler into something better
 
-            Random rand = RandomSingleton.Instance.CurrentAlgoRand;
+            Random rand = RandomSingleton.Instance.Rand;
 
 
             return source.OrderBy<T, int>((item) => rand.Next());

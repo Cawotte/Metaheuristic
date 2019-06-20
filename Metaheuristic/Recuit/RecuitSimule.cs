@@ -1,6 +1,7 @@
 ﻿
 namespace Metaheuristic.Recuit
 {
+    using Metaheuristic.Logs;
     using Metaheuristic.QAP;
     using System;
     using System.Collections.Generic;
@@ -8,34 +9,63 @@ namespace Metaheuristic.Recuit
     using System.Text;
 
 
-    public class RecuitSimule
+    public class RecuitSimule : IQAPSolver
     {
 
-        public bool Verbose = true;
+        //General
+        private bool verbose = true;
         private QuadraticAssignment qap;
 
-        private Random rnd = RandomSingleton.Instance.CurrentAlgoRand;
+        private Random rand = RandomSingleton.Instance.Rand;
 
         private RecuitLogs logs;
 
+        #region Properties
+
+        public ILogs Logs { get => logs; }
+
+        public bool Verbose
+        {
+            get; set;
+        }
         public int N
         {
             get => qap.N;
         }
-        public RecuitLogs Logs { get => logs; }
+
+        #endregion
 
         public RecuitSimule(QuadraticAssignment problem)
         {
             this.qap = problem;
         }
 
-        public QuadraticAssignmentSolution Execute(QuadraticAssignmentSolution initialSol, 
+
+        public QuadraticAssignmentSolution Run(ISolverParameters param)
+        {
+            RecuitSimuleParameters paramRec;
+
+            if (param is RecuitSimuleParameters)
+            {
+                paramRec = (RecuitSimuleParameters)param;
+            }
+            else
+            {
+                throw new BadTypeException();
+            }
+
+            return Run(paramRec.InitialSol,
+                        paramRec.InitialTemp,
+                        paramRec.TemperatureDecrease,
+                        paramRec.MaxSteps);
+        }
+
+        public QuadraticAssignmentSolution Run(QuadraticAssignmentSolution initialSol, 
                                                     double initialTemp, 
                                                     double temperatureDecrease, 
                                                     int maxSteps)
         {
-            rnd = RandomSingleton.Instance.CurrentAlgoRand;
-            Stopwatch stopWatch = Stopwatch.StartNew();
+            rand = RandomSingleton.Instance.Rand;
             
             //setup
             QuadraticAssignmentSolution current = initialSol;
@@ -52,7 +82,7 @@ namespace Metaheuristic.Recuit
             logs = new RecuitLogs();
             logs.AddStep(current, best, temperature);
 
-            if (Verbose)
+            if (verbose)
             {
                 Console.WriteLine("\n---- RECUIT SIMULE :");
                 Console.WriteLine("S0 : " + initialSol.ToString());
@@ -66,7 +96,7 @@ namespace Metaheuristic.Recuit
 
             for (int i = 0; i < maxSteps; i++)
             {
-                if (Verbose)
+                if (verbose)
                 {
                     Console.WriteLine("Step #" + (i + 1));
                 }
@@ -94,7 +124,7 @@ namespace Metaheuristic.Recuit
                 else
                 {
                     //There's a random chance to keep it anyway
-                    double p = rnd.NextDouble(); //rand in [0,1[
+                    double p = rand.NextDouble(); //rand in [0,1[
 
                     //I haven't chose that formula
                     if (p <= Math.Exp(-diffFitness / temperature))
@@ -118,15 +148,14 @@ namespace Metaheuristic.Recuit
                 //Additional terminal condition : If Temperature is extremely cold
                 if (temperature < 1d || stagnantCount >= 40)
                 {
-                    if (Verbose)
+                    if (verbose)
                         Console.WriteLine("Temperature/Changes is very low ! Algorithm has been stopped early. Step = " + i);
                     break;
                 }
             }
 
-            logs.AddFinalLog(stopWatch.ElapsedMilliseconds);
-            stopWatch.Stop();
-            if (Verbose)
+            logs.AddFinalLog();
+            if (verbose)
             {
                 Console.WriteLine("---- Meilleur résultat :");
                 Console.WriteLine(best.ToString());
@@ -135,14 +164,6 @@ namespace Metaheuristic.Recuit
             }
 
             return best;
-        }
-
-        public QuadraticAssignmentSolution Execute(RecuitSimuleParameters parameters)
-        {
-            return Execute(parameters.InitialSol,
-                        parameters.InitialTemp,
-                        parameters.TemperatureDecrease,
-                        parameters.MaxSteps);
         }
     }
 

@@ -85,10 +85,10 @@ namespace Metaheuristic
 
             GeneticAlgorithmRecuit ga = new GeneticAlgorithmRecuit(recuit, 40, 15, 0.05d, 1, 3);
 
-            ga.Verbose = true;
+            ga.verbose = true;
             ga.WithLogs = true;
             RecuitSimuleParameters bestParam = ga.Run();
-            QuadraticAssignmentSolution best = recuit.Execute(bestParam);
+            QuadraticAssignmentSolution best = recuit.Run(bestParam);
 
             Console.WriteLine("Best Params : " + bestParam.ToString());
             Console.WriteLine("\nBest Solution : " + best.ToString());
@@ -105,7 +105,7 @@ namespace Metaheuristic
             QuadraticAssignmentSolution best;
             
             RecuitSimule recuit = new RecuitSimule(qap);
-            best = recuit.Execute(initialSol, 70000, 0.85f, 200);
+            best = recuit.Run(initialSol, 70000, 0.85f, 200);
 
             Console.WriteLine(recuit.Logs.FinalLog.ToString());
             Console.WriteLine(recuit.Logs.ToStringImprovements());
@@ -123,7 +123,7 @@ namespace Metaheuristic
 
             GeneticAlgorithmQAP ga = new GeneticAlgorithmQAP(qap, 100, 50, 0.05d, 2, 20);
 
-            ga.Verbose = true;
+            ga.verbose = true;
             ga.WithLogs = true;
             QuadraticAssignmentSolution best = ga.Run();
 

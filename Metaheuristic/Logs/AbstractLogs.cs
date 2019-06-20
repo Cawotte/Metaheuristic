@@ -6,37 +6,47 @@ using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration.Attributes;
 using Metaheuristic.QAP;
+using System.Linq;
 
-namespace Metaheuristic
+namespace Metaheuristic.Logs
 {
-    public abstract class AbstractLogs
+    public abstract class AbstractLogs : ILogs
     {
         protected List<AbstractLog> logs = new List<AbstractLog>();
         protected AbstractFinalLog finalLog;
 
         protected Stopwatch stopWatch = Stopwatch.StartNew();
 
-        protected AbstractLog Previous
+        #region Properties
+
+        #region Interface ILogs
+
+        public List<ILog> Logs
         {
-            get => logs[logs.Count - 1];
+            get => logs.Cast<ILog>().ToList(); //ugly?
         }
+
+        public ILog FinalLog
+        {
+            get => finalLog;
+        }
+        public int Size
+        {
+            get => logs.Count;
+        }
+        #endregion
 
         public AbstractLog this[int index]
         {
             get => logs[index];
         }
-
-        public AbstractFinalLog FinalLog
-        {
-            get => finalLog;
-        }
-
-        public int Size
-        {
-            get => logs.Count;
-        }
         
-        
+        public AbstractLog Previous
+        {
+            get => logs[logs.Count - 1];
+        }
+        #endregion
+
 
         protected void AddFinal(AbstractFinalLog final)
         {
@@ -69,15 +79,13 @@ namespace Metaheuristic
                 csv.WriteRecords(logs);
             }
         }
-
-
-
+        
         public static double GetImprovement(int lastFitness, int newFitness)
         {
             return Math.Round((1d - (double)newFitness / (double)lastFitness) * 100, 4);
         }
 
-        public double GetRelativeError(int bestFoundFitness, int bestKnownFitness)
+        public static double GetRelativeError(int bestFoundFitness, int bestKnownFitness)
         {
             double absoluteError = Math.Abs(bestFoundFitness - bestKnownFitness);
             return Math.Round( (absoluteError / bestKnownFitness) * 100, 4);
@@ -115,7 +123,7 @@ namespace Metaheuristic
             return str;
         }
 
-        public abstract class AbstractLog
+        public abstract class AbstractLog : ILog
         {
             [Name("Step")]
             public int Step { get; set; }
@@ -139,7 +147,14 @@ namespace Metaheuristic
             [Name("Time Ellapsed")]
             public double TimeEllapsed { get; set; }
 
-            public abstract override string ToString();
+            public override string ToString()
+            {
+                string str = "";
+                str += "\nStep #" + Step;
+                str += "\nExecution Time : " + TimeEllapsed + "ms";
+                str += BestToString();
+                return str;
+            }
 
             protected string BestToString()
             {
@@ -153,7 +168,7 @@ namespace Metaheuristic
         
         
 
-        public abstract class AbstractFinalLog
+        public abstract class AbstractFinalLog : ILog
         {
             //Best found and improvements
             public QuadraticAssignmentSolution Best;
